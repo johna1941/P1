@@ -33,7 +33,7 @@
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
-#include "G4TessellatedSolid.hh"
+#include "G4Orb.hh"
 #include "G4TriangularFacet.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
@@ -50,42 +50,6 @@ P1DetectorConstruction::P1DetectorConstruction()
 P1DetectorConstruction::~P1DetectorConstruction()
 { }
 
-namespace  {
-  std::ifstream stlfile("stlfile.stl");
-
-  char c0;
-  union {
-    char ch[4];
-    int n;
-    float f;
-  } u;
-  char header[81];
-
-  void get_header() {
-    for (int i = 0; i < 80; ++i) {
-      if (!stlfile.get(c0)) abort();
-      header[i] = c0;
-    }
-    header[80] = '\0';
-  }
-
-  int get_int() {
-    for (int i = 0; i < 4; ++i) {
-      if (!stlfile.get(c0)) abort();
-      u.ch[i] = c0;
-    }
-    return u.n;
-  }
-
-  float get_float() {
-    for (int i = 0; i < 4; ++i) {
-      if (!stlfile.get(c0)) abort();
-      u.ch[i] = c0;
-    }
-    return u.f;
-  }
-}
-
 G4VPhysicalVolume* P1DetectorConstruction::Construct()
 {  
   // Get nist material manager
@@ -97,6 +61,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Materials
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
   G4Material* neoprene  = nist->FindOrBuildMaterial("G4_NEOPRENE");
+  G4Material* lucite  = nist->FindOrBuildMaterial("G4_LUCITE");
 
   // World
   G4Box* solidWorld =
@@ -117,39 +82,17 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
                       0,                     //copy number
                       checkOverlaps);        //overlaps checking
                      
-  // Read stl file and construct G4TessellatedSolid.
-  get_header();
-  // Replace spaces by '-'.
-  for (size_t i = 0; i < std::strlen(header); ++i) {
-    if (header[i] == ' ') header[i] = '-';
-  }
-  G4cout << "Header: \"" << header <<"\"" << G4endl;
-  int nFacets = get_int();
-  G4cout << "No of facets: " << nFacets << G4endl;
-  G4TessellatedSolid* ts = new G4TessellatedSolid(header);
-  for (int iFacet = 0; iFacet < nFacets; ++iFacet) {
-    G4Normal3D normal(get_float(),get_float(),get_float());
-    G4Point3D vertex1(get_float()*mm,get_float()*mm,get_float()*mm);
-    G4Point3D vertex2(get_float()*mm,get_float()*mm,get_float()*mm);
-    G4Point3D vertex3(get_float()*mm,get_float()*mm,get_float()*mm);
-    if (iFacet < 10) {  // Print first ten facets
-      G4cout << "Normal: " << normal << G4endl;
-      G4cout << "Vertex1: " << vertex1 << G4endl;
-      G4cout << "Vertex2: " << vertex2 << G4endl;
-      G4cout << "Vertex3: " << vertex3 << G4endl;
-    }
-    G4TriangularFacet* tf =
-    new G4TriangularFacet(vertex1,vertex2,vertex3,ABSOLUTE);
-    ts->AddFacet(tf);
-    if (!stlfile.get(c0)) abort();  // Two dummy characters
-    if (!stlfile.get(c0)) abort();
-  }
-  ts->SetSolidClosed(true);
-  G4LogicalVolume* lv = new G4LogicalVolume(ts,neoprene,header);
-  new G4PVPlacement(0,G4ThreeVector(),lv,header,logicWorld,0,false);
+  // Orb
+  G4String name = "orb";
+  G4VSolid* orb = new G4Orb(name,5.*cm);
+  G4LogicalVolume* orb_lv = new G4LogicalVolume(orb,neoprene,name);
+  new G4PVPlacement(0,G4ThreeVector(),orb_lv,name,logicWorld,0,false);
 
-  // That should be it
-  if (stlfile.get(c0)) abort();
+  // Scintillator
+  name = "scintillator";
+  G4VSolid* scint = new G4Orb(name,4.*cm);
+  G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,lucite,name);
+  new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false);
 
   //always return the physical World
   return physWorld;
