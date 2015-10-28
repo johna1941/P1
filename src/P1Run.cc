@@ -30,36 +30,22 @@
 
 #include "P1Run.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 P1Run::P1Run()
-: G4Run(),
-  fEdep(0.), 
-  fEdep2(0.)
+: fNumberOfPhotons(0)
 {} 
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 P1Run::~P1Run()
 {} 
- 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void P1Run::Merge(const G4Run* run)
 {
   const P1Run* localRun = static_cast<const P1Run*>(run);
-  fEdep  += localRun->fEdep;
-  fEdep2 += localRun->fEdep2;
+  fNumberOfPhotons  += localRun->fNumberOfPhotons;
 
   G4Run::Merge(run); 
 } 
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-void P1Run::AddEdep (G4double edep)
+void P1Run::AddPhotons (G4int photons)
 {
-  fEdep  += edep;
-  fEdep2 += edep*edep;
+  fNumberOfPhotons += photons;
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

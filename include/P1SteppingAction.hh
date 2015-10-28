@@ -51,8 +51,7 @@ class P1SteppingAction : public G4UserSteppingAction
     virtual void UserSteppingAction(const G4Step*);
 
   private:
-    P1EventAction*  fEventAction;
-    G4LogicalVolume* fScoringVolume;
+//    P1EventAction*  fEventAction;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

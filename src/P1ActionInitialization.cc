@@ -58,11 +58,11 @@ void P1ActionInitialization::Build() const
 {
   SetUserAction(new P1PrimaryGeneratorAction);
   SetUserAction(new P1RunAction);
+
+  P1EventAction* p1EventAction = new P1EventAction;
+  SetUserAction(p1EventAction);
   
-  P1EventAction* eventAction = new P1EventAction;
-  SetUserAction(eventAction);
-  
-  SetUserAction(new P1SteppingAction(eventAction));
-}  
+  SetUserAction(new P1SteppingAction(p1EventAction));
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

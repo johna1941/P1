@@ -37,6 +37,7 @@
 #include "G4RunManager.hh"
 #endif
 
+#include "G4Timer.hh"
 #include "G4UImanager.hh"
 #include "QBBC.hh"
 
@@ -56,6 +57,17 @@ int main(int argc,char** argv)
     ui = new G4UIExecutive(argc, argv);
   }
 
+  G4Timer timer;
+  G4cout << timer.GetClockTime();  // Has a newline on the end
+  G4int epochTime = time(0);
+  G4cout << "Epoch seconds: " << time(0) << G4endl;
+  // Use this for the random seed.  Ensure it's odd.
+  G4int seed = epochTime | 1;
+  G4cout << "Seed: " << seed << G4endl;
+  CLHEP::RanluxEngine defaultEngine(12345,4);  // Nominal seed
+  G4Random::setTheEngine(&defaultEngine);
+  G4Random::setTheSeed(seed);  // Needed for MT mode
+
   // Choose the Random engine
   G4Random::setTheEngine(new CLHEP::RanecuEngine);
   
@@ -63,6 +75,7 @@ int main(int argc,char** argv)
   //
 #ifdef G4MULTITHREADED
   G4MTRunManager* runManager = new G4MTRunManager;
+  runManager->SetNumberOfThreads(8);
 #else
   G4RunManager* runManager = new G4RunManager;
 #endif

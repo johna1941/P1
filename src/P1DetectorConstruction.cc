@@ -40,12 +40,13 @@
 #include "G4PVPlacement.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4VisAttributes.hh"
+#include "P1SensitiveDetector.hh"
+#include "G4SDManager.hh"
 
 #include <fstream>
 
 P1DetectorConstruction::P1DetectorConstruction()
-: G4VUserDetectorConstruction(),
-  fScoringVolume(0)
+: fFibreLV(0)
 { }
 
 P1DetectorConstruction::~P1DetectorConstruction()
@@ -99,10 +100,19 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 // Fibre
 name = "fibre";
 G4VSolid* fibre = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
-G4LogicalVolume* fibre_lv = new G4LogicalVolume(fibre,lucite,name);
-new G4PVPlacement(0,G4ThreeVector(0.,0.,-3.9*cm),fibre_lv,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument. 
+fFibreLV = new G4LogicalVolume(fibre,lucite,name);
+new G4PVPlacement(0,G4ThreeVector(0.,0.,3.9*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
 
 
   //always return the physical World
   return physWorld;
 }
+
+void P1DetectorConstruction::ConstructSDandField()
+{
+  G4SDManager* pSDman = G4SDManager::GetSDMpointer();
+  G4VSensitiveDetector* fibreSD = new P1SensitiveDetector("Fibre");
+  pSDman->AddNewDetector(fibreSD);
+  fFibreLV->SetSensitiveDetector(fibreSD);
+}
+

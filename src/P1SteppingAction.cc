@@ -39,10 +39,7 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-P1SteppingAction::P1SteppingAction(P1EventAction* eventAction)
-: G4UserSteppingAction(),
-  fEventAction(eventAction),
-  fScoringVolume(0)
+P1SteppingAction::P1SteppingAction(P1EventAction* /*eventAction*/)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -52,26 +49,26 @@ P1SteppingAction::~P1SteppingAction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void P1SteppingAction::UserSteppingAction(const G4Step* step)
+void P1SteppingAction::UserSteppingAction(const G4Step* /*step*/)
 {
-  if (!fScoringVolume) { 
-    const P1DetectorConstruction* detectorConstruction
-      = static_cast<const P1DetectorConstruction*>
-        (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-    fScoringVolume = detectorConstruction->GetScoringVolume();   
-  }
-
-  // get volume of the current step
-  G4LogicalVolume* volume 
-    = step->GetPreStepPoint()->GetTouchableHandle()
-      ->GetVolume()->GetLogicalVolume();
-      
-  // check if we are in scoring volume
-  if (volume != fScoringVolume) return;
-
-  // collect energy deposited in this step
-  G4double edepStep = step->GetTotalEnergyDeposit();
-  fEventAction->AddEdep(edepStep);  
+//  if (!fScoringVolume) { 
+//    const P1DetectorConstruction* detectorConstruction
+//      = static_cast<const P1DetectorConstruction*>
+//        (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+//    fScoringVolume = detectorConstruction->GetScoringVolume();   
+//  }
+//
+//  // get volume of the current step
+//  G4LogicalVolume* volume 
+//    = step->GetPreStepPoint()->GetTouchableHandle()
+//      ->GetVolume()->GetLogicalVolume();
+//      
+//  // check if we are in scoring volume
+//  if (volume != fScoringVolume) return;
+//
+//  // collect energy deposited in this step
+//  G4double edepStep = step->GetTotalEnergyDeposit();
+//  fEventAction->AddEdep(edepStep);  
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

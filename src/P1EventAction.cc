@@ -34,11 +34,8 @@
 #include "G4Event.hh"
 #include "G4RunManager.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 P1EventAction::P1EventAction()
-: G4UserEventAction(),
-  fEdep(0.)
+: fNumberOfPhotons(0)
 {} 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -50,7 +47,7 @@ P1EventAction::~P1EventAction()
 
 void P1EventAction::BeginOfEventAction(const G4Event*)
 {    
-  fEdep = 0.;
+  fNumberOfPhotons = 0;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -58,10 +55,9 @@ void P1EventAction::BeginOfEventAction(const G4Event*)
 void P1EventAction::EndOfEventAction(const G4Event*)
 {   
   // accumulate statistics in P1Run
-  P1Run* run 
-    = static_cast<P1Run*>(
-        G4RunManager::GetRunManager()->GetNonConstCurrentRun());
-  run->AddEdep(fEdep);
+  P1Run* run =
+  static_cast<P1Run*>(G4RunManager::GetRunManager()->GetNonConstCurrentRun());
+  run->AddPhotons(fNumberOfPhotons);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
