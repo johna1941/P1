@@ -1,4 +1,4 @@
 /gps/particle proton
 /gps/energy 1 GeV
 /gps/direction 0 0 1
-/gps/position 0.1 0.1 -20 cm
+/gps/position 0 0 -20 cm
