@@ -1,5 +1,3 @@
-### Hiiiiiiiiiiiiiiiii becky
-
 # Macro file for the visualization setting in the initialization phase 
 # of the B1 example when running in interactive mode
 #
@@ -128,6 +126,6 @@
 #gun2.mac is a beam of protons directed at the cavity
 #To select a gun, comment out the gun that you do not desire
 #
-# /control/execute gun.mac
-/control/execute gun2.mac
+/control/execute gun.mac
+#/control/execute gun2.mac
 #
