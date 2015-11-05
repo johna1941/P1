@@ -117,6 +117,8 @@ int main(int argc,char** argv)
 	if (ui->IsGUI()) {
 		UImanager->ApplyCommand("/control/execute gui.mac");
 	}
+	// This ensures that gui.mac is initialised on startup
+	// This means that the menus and toolbar are added for the sake of accessibility. 
     ui->SessionStart();
     delete ui;
   }
