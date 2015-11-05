@@ -32,6 +32,6 @@
 /gps/particle proton
 /gps/energy 1 GeV
 /gps/pos/type Point
-/gps/pos/centre 0 0 -12.5 cm
-/gps/direction 0 0 1
+/gps/pos/centre 0 -5.58 -10 cm
+/gps/direction 0 5.58 10
 
