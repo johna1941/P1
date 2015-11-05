@@ -56,6 +56,11 @@ set(P1_SCRIPTS
   icons.mac
   harrypotter5.png
   )
+# gun2.mac, gui.mac, icons.mac, and harrypotter5.png have been added to 
+# CMakeLists.txt to ensure that they are copied across to the build 
+# directory when the "make" command is entered. harrypotter5.png is a 
+# 128x128 pixel icon used as the icon for /run/beamOn 100. 
+# John: this is just humour on our part, you're welcome to ignore it. 
 
 foreach(_script ${P1_SCRIPTS})
   configure_file(
