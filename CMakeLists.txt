@@ -51,6 +51,10 @@ set(P1_SCRIPTS
   run2.mac
   vis.mac
   gun.mac
+  gun2.mac
+  gui.mac
+  icons.mac
+  harrypotter5.png
   )
 
 foreach(_script ${P1_SCRIPTS})
