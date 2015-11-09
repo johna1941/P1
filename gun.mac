@@ -1,4 +1,9 @@
-/gps/particle proton
-/gps/energy 1 GeV
-/gps/direction 0 0 1
-/gps/position 0 0 -20 cm
+#/gps/particle proton
+#/gps/energy 1 GeV
+#/gps/direction 0 0 1
+#/gps/position 0 0 -20 cm
+
+/gps/particle geantino
+/gps/pos/type Point
+/gps/ang/type iso
+/gps/pos/centre 0 0 0 cm
