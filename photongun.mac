@@ -1,0 +1,37 @@
+#######################################
+#######################################
+#######                         #######
+####### General Particle Source #######
+#######                         #######
+#######################################
+#######################################
+#
+# gun.mac is initialised by vis.mac in the final line. 
+# Both guns are included for the sake of completeness. 
+# NOTE: The beam of protons is deliberately commented out. If you wish to select this gun, alter the vis.mac file, not this one. 
+# To select the beam of protons, enter vis.mac and comment out "/control/execute gun.mac
+#
+#######################################
+###Uniform source of optical photons###
+#######################################
+
+/gps/particle opticalphoton
+/gps/energy 2.5 eV
+/gps/pos/type Volume
+/gps/pos/shape Sphere
+/gps/pos/centre 0 0 0
+/gps/pos/radius 4 cm
+/gps/pos/rot1 1 0 0 
+/gps/pos/rot2 0 1 0
+/gps/ang/type iso
+
+#######################################
+############Beam of protons############
+#######################################
+
+### /gps/particle proton
+### /gps/energy 1 GeV
+### /gps/pos/type Point
+### /gps/pos/centre 0 0 -20 cm
+### /gps/direction 0 0 1
+
