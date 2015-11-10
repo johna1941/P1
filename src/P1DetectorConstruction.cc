@@ -87,12 +87,17 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
     1.3572, 1.358,  1.3585, 1.359,  1.3595,
     1.36,   1.3608};
   G4double absorption[] =
-  {3.448*m,  4.082*m,  6.329*m,  9.174*m, 12.346*m, 13.889*m,
-    15.152*m, 17.241*m, 18.868*m, 20.000*m, 26.316*m, 35.714*m,
-    45.455*m, 47.619*m, 52.632*m, 52.632*m, 55.556*m, 52.632*m,
-    52.632*m, 47.619*m, 45.455*m, 41.667*m, 37.037*m, 33.333*m,
-    30.000*m, 28.500*m, 27.000*m, 24.500*m, 22.000*m, 19.500*m,
-    17.500*m, 14.500*m };
+//  {3.448*m,  4.082*m,  6.329*m,  9.174*m, 12.346*m, 13.889*m,
+//    15.152*m, 17.241*m, 18.868*m, 20.000*m, 26.316*m, 35.714*m,
+//    45.455*m, 47.619*m, 52.632*m, 52.632*m, 55.556*m, 52.632*m,
+//    52.632*m, 47.619*m, 45.455*m, 41.667*m, 37.037*m, 33.333*m,
+//    30.000*m, 28.500*m, 27.000*m, 24.500*m, 22.000*m, 19.500*m,
+//    17.500*m, 14.500*m };
+  { 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
+    3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
+    3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
+    3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
+    3.*m, 3.*m, 3.*m, 3.*m };
   G4double scintilFast[] =
   { 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
     1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
@@ -151,7 +156,6 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4String name = "orb"; // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
   G4VSolid* orb = new G4Orb(name,5.*cm);
   G4LogicalVolume* orb_lv = new G4LogicalVolume(orb,neoprene,name); //(eg.) Neoprene, can be changed to something more suitable in the future. 
-  G4VPhysicalVolume* orb_pv =
   new G4PVPlacement(0,G4ThreeVector(),orb_lv,name,logicWorld,0,false); // Orb one inside logical world
 
   // Scintillator
@@ -159,13 +163,11 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4VSolid* scint = new G4Orb(name,4.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
 //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,liq_scint,name);
-  G4VPhysicalVolume* scint_pv =
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
   G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
   scint_surface->SetType(dielectric_dielectric);
   scint_surface->SetFinish(polishedfrontpainted);
   scint_surface->SetModel(unified);
-  G4LogicalSkinSurface* skinSurface =
   new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
   scint_surface->DumpInfo();
 
