@@ -173,15 +173,15 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 
 // Fibre1
 name = "fibre";
-G4VSolid* fibre = new G4Tubs(name,0.,1.*cm,1.*um,0,360.*deg);
+G4VSolid* fibre = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
 fFibreLV = new G4LogicalVolume(fibre,liq_scint,name);
-new G4PVPlacement(0,G4ThreeVector(0.,0.,3.*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
+new G4PVPlacement(0,G4ThreeVector(0.,0.,3.8*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
 
 // Fibre2
 name = "fibre2";
 G4VSolid* fibre2 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
-fFibre2LV = new G4LogicalVolume(fibre2,lucite,name);
-new G4PVPlacement(0,G4ThreeVector(0.,3.9*cm,3.9*cm),fFibre2LV,name,scint_lv,0,false);
+fFibre2LV = new G4LogicalVolume(fibre2,liq_scint,name);
+new G4PVPlacement(0,G4ThreeVector(0.,3.8*cm,0.),fFibre2LV,name,scint_lv,0,false);
 
 
   //always return the physical World
