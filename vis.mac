@@ -126,6 +126,6 @@
 #gun2.mac is a beam of protons directed at the cavity
 #To select a gun, comment out the gun that you do not desire
 #
-/control/execute gun.mac
-#/control/execute gun2.mac
-#
+#/control/execute protongun.mac
+#/control/execute photongun.mac
+/control/execute squaregun.mac

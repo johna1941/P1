@@ -50,8 +50,9 @@ set(P1_SCRIPTS
   run1.mac
   run2.mac
   vis.mac
-  gun.mac
-  gun2.mac
+  protongun.mac
+  photongun.mac
+  squaregun.mac
   gui.mac
   icons.mac
   harrypotter5.png
