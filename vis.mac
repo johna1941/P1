@@ -122,10 +122,13 @@
 ### Initialise particle gun ###
 ###############################
 #Pick a gun to use. 
-#gun.mac is a volume source of optical photons, inside of the cavity
-#gun2.mac is a beam of protons directed at the cavity
+#gun.mac is a basic specification for the particle gun
+#photogun.mac is a volume source of optical photons, inside of the cavity
+#protongun.mac is a beam of protons directed at the cavity
+#squaregun.mac is a rectangular plane of photons.
 #To select a gun, comment out the gun that you do not desire
 #
+#/control/execute gun.mac
 #/control/execute protongun.mac
-/control/execute photongun.mac
+#/control/execute photongun.mac
 #/control/execute squaregun.mac
