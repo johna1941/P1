@@ -163,8 +163,8 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
   G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
   scint_surface->SetType(dielectric_dielectric);
-  scint_surface->SetFinish(polished);
-  scint_surface->SetModel(glisur);
+  scint_surface->SetFinish(polishedfrontpainted);
+  scint_surface->SetModel(unified);
   G4LogicalSkinSurface* skinSurface =
   new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
   scint_surface->DumpInfo();
