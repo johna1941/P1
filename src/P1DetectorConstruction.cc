@@ -40,6 +40,8 @@
 #include "G4PVPlacement.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4VisAttributes.hh"
+#include "G4OpticalSurface.hh"
+#include "G4LogicalSkinSurface.hh"
 #include "P1SensitiveDetector.hh"
 #include "G4SDManager.hh"
 
@@ -63,7 +65,73 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Materials
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
   G4Material* neoprene  = nist->FindOrBuildMaterial("G4_NEOPRENE"); // As an example, we'll be more specific closer to the time. 
-  G4Material* lucite  = nist->FindOrBuildMaterial("G4_LUCITE");
+  G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_LUCITE");  // Again, an example.
+
+  // For now give liq_scint some optical properties (from examples/extended/optical/OpNovice).
+  G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+  G4double photonEnergy[] =
+  { 2.034*eV, 2.068*eV, 2.103*eV, 2.139*eV,
+    2.177*eV, 2.216*eV, 2.256*eV, 2.298*eV,
+    2.341*eV, 2.386*eV, 2.433*eV, 2.481*eV,
+    2.532*eV, 2.585*eV, 2.640*eV, 2.697*eV,
+    2.757*eV, 2.820*eV, 2.885*eV, 2.954*eV,
+    3.026*eV, 3.102*eV, 3.181*eV, 3.265*eV,
+    3.353*eV, 3.446*eV, 3.545*eV, 3.649*eV,
+    3.760*eV, 3.877*eV, 4.002*eV, 4.136*eV };
+  G4double refractiveIndex1[] =
+  { 1.3435, 1.344,  1.3445, 1.345,  1.3455,
+    1.346,  1.3465, 1.347,  1.3475, 1.348,
+    1.3485, 1.3492, 1.35,   1.3505, 1.351,
+    1.3518, 1.3522, 1.3530, 1.3535, 1.354,
+    1.3545, 1.355,  1.3555, 1.356,  1.3568,
+    1.3572, 1.358,  1.3585, 1.359,  1.3595,
+    1.36,   1.3608};
+  G4double absorption[] =
+//  {3.448*m,  4.082*m,  6.329*m,  9.174*m, 12.346*m, 13.889*m,
+//    15.152*m, 17.241*m, 18.868*m, 20.000*m, 26.316*m, 35.714*m,
+//    45.455*m, 47.619*m, 52.632*m, 52.632*m, 55.556*m, 52.632*m,
+//    52.632*m, 47.619*m, 45.455*m, 41.667*m, 37.037*m, 33.333*m,
+//    30.000*m, 28.500*m, 27.000*m, 24.500*m, 22.000*m, 19.500*m,
+//    17.500*m, 14.500*m };
+  { 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
+    3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
+    3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
+    3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
+    3.*m, 3.*m, 3.*m, 3.*m };
+  G4double scintilFast[] =
+  { 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
+    1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
+    1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
+    1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
+    1.00, 1.00, 1.00, 1.00 };
+  G4double scintilSlow[] =
+  { 0.01, 1.00, 2.00, 3.00, 4.00, 5.00, 6.00,
+    7.00, 8.00, 9.00, 8.00, 7.00, 6.00, 4.00,
+    3.00, 2.00, 1.00, 0.01, 1.00, 2.00, 3.00,
+    4.00, 5.00, 6.00, 7.00, 8.00, 9.00, 8.00,
+    7.00, 6.00, 5.00, 4.00 };
+  // Health check
+  const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
+  assert(sizeof(refractiveIndex1) == sizeof(photonEnergy));
+  assert(sizeof(absorption) == sizeof(photonEnergy));
+  assert(sizeof(scintilFast) == sizeof(photonEnergy));
+  assert(sizeof(scintilSlow) == sizeof(photonEnergy));
+  // Add to material properties table
+  mpt->AddProperty("RINDEX",       photonEnergy, refractiveIndex1,nEntries)
+  ->SetSpline(true);
+  mpt->AddProperty("ABSLENGTH",    photonEnergy, absorption,     nEntries)
+  ->SetSpline(true);
+  mpt->AddProperty("FASTCOMPONENT",photonEnergy, scintilFast,     nEntries)
+  ->SetSpline(true);
+  mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
+  ->SetSpline(true);
+  mpt->AddConstProperty("SCINTILLATIONYIELD",50./MeV);
+  mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
+  mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
+  mpt->AddConstProperty("YIELDRATIO",0.8);
+  mpt->DumpTable();
+  liq_scint->SetMaterialPropertiesTable(mpt);
 
   // World
   G4Box* solidWorld =
@@ -73,7 +141,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
     new G4LogicalVolume(solidWorld,          //its solid
                         world_mat,           //its material
                         "World");            //its name
-  logicWorld->SetVisAttributes(G4VisAttributes::GetInvisible()); //This means that when it sets the scale of the world it will ignore this. 
+  logicWorld->SetVisAttributes(G4VisAttributes::GetInvisible()); //This means that when it sets the scale of the world it will ignore this.
   G4VPhysicalVolume* physWorld =
     new G4PVPlacement(0,                     //no rotation
                       G4ThreeVector(),       //at (0,0,0)
@@ -93,15 +161,21 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Scintillator
   name = "scintillator";
   G4VSolid* scint = new G4Orb(name,4.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
-//Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere. 
-  G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,lucite,name);
- new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one. 
+//Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
+  G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,liq_scint,name);
+  new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
+  G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
+  scint_surface->SetType(dielectric_dielectric);
+  scint_surface->SetFinish(polishedfrontpainted);
+  scint_surface->SetModel(unified);
+  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
+  scint_surface->DumpInfo();
 
 // Fibre1
 name = "fibre";
-G4VSolid* fibre = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
-fFibreLV = new G4LogicalVolume(fibre,lucite,name);
-new G4PVPlacement(0,G4ThreeVector(0.,0.,3.9*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
+G4VSolid* fibre = new G4Tubs(name,0.,1.*cm,1.*um,0,360.*deg);
+fFibreLV = new G4LogicalVolume(fibre,liq_scint,name);
+new G4PVPlacement(0,G4ThreeVector(0.,0.,3.*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
 
 // Fibre2
 name = "fibre2";
