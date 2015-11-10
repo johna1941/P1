@@ -1,0 +1,54 @@
+#######################################
+#######################################
+#######                         #######
+####### General Particle Source #######
+#######                         #######
+#######################################
+#######################################
+#
+# gun2.mac is initialised by vis.mac in the final line. 
+# Both guns are included for the sake of completeness. 
+# NOTE: The source of photons is deliberately commented out. If you wish to select this gun, alter the vis.mac file, not this one. 
+# To select the source of photons, enter vis.mac and comment out "/control/execute gun2.mac
+#
+#######################################
+###Uniform source of optical photons###
+#######################################
+
+### /gps/particle opticalphoton
+### /gps/energy 2.5 eV
+### /gps/pos/type Volume
+### /gps/pos/shape Sphere
+### /gps/pos/centre 0 0 0
+### /gps/pos/radius 1 cm
+### /gps/pos/rot1 1 0 0 
+### /gps/pos/rot2 0 1 0
+### /gps/ang/type iso
+
+#######################################
+############Beam of protons############
+#######################################
+
+### /gps/particle proton
+### /gps/energy 1 GeV
+### /gps/pos/type Point
+### /gps/pos/centre 0 -5.58 -10 cm
+### /gps/direction 0 5.58 10
+
+#######################################
+#######Square beam of photons##########
+#######################################
+# temporary test for square beam
+
+/gps/particle opticalphoton
+/gps/energy 6 MeV
+/gps/pos/type Plane
+/gps/pos/shape Rectangle
+/gps/pos/halfx 5 cm
+/gps/pos/halfy 5 cm
+/gps/pos/centre 0 -5.58 -10 cm
+/gps/direction 0 5.58 10
+/gps/pos/rot1 1 0 0 
+/gps/pos/rot2 0 1 0
+
+
