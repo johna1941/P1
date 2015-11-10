@@ -64,6 +64,8 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
   G4Material* neoprene  = nist->FindOrBuildMaterial("G4_NEOPRENE"); // As an example, we'll be more specific closer to the time. 
   G4Material* lucite  = nist->FindOrBuildMaterial("G4_LUCITE");
+  G4Material* water  = nist->FindOrBuildMaterial("G4_WATER");
+  
 
   // World
   G4Box* solidWorld =
@@ -87,7 +89,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Orb
   G4String name = "orb"; // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
   G4VSolid* orb = new G4Orb(name,5.*cm);
-  G4LogicalVolume* orb_lv = new G4LogicalVolume(orb,neoprene,name); //(eg.) Neoprene, can be changed to something more suitable in the future. 
+  G4LogicalVolume* orb_lv = new G4LogicalVolume(orb,water,name); //(eg.) Neoprene, can be changed to something more suitable in the future. 
   new G4PVPlacement(0,G4ThreeVector(),orb_lv,name,logicWorld,0,false); // Orb one inside logical world
 
   // Scintillator
@@ -101,7 +103,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 name = "fibre";
 G4VSolid* fibre = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
 fFibreLV = new G4LogicalVolume(fibre,lucite,name);
-new G4PVPlacement(0,G4ThreeVector(0.,0.,3.9*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
+new G4PVPlacement(0,G4ThreeVector(0.,0.,-3.9*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
 
 
   //always return the physical World
