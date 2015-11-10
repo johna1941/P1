@@ -97,12 +97,18 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,lucite,name);
  new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one. 
 
-// Fibre
+// Fibre1
 name = "fibre";
 G4VSolid* fibre = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
 fFibreLV = new G4LogicalVolume(fibre,lucite,name);
 new G4PVPlacement(0,G4ThreeVector(0.,0.,3.9*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
-
+/*
+// Fibre2
+name = "fibre2";
+G4Solid* fibre2 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
+fFibre2LV = new G4LogicalVolume(fibre2,lucite,name);
+new G4PVPlacement(0,G4ThreeVector(0.,3.9*cm,3.9*cm),fFibre2LV,name,scint_lv,0,false);
+*/
 
   //always return the physical World
   return physWorld;
@@ -112,7 +118,10 @@ void P1DetectorConstruction::ConstructSDandField()
 {
   G4SDManager* pSDman = G4SDManager::GetSDMpointer();
   G4VSensitiveDetector* fibreSD = new P1SensitiveDetector("Fibre");
+  // G4VSensitiveDetector* fibreSD2 = new P1SensitiveDetector("Fibre2");
   pSDman->AddNewDetector(fibreSD);
+  // pSDman->AddNewDetector(fibreSD2);
   fFibreLV->SetSensitiveDetector(fibreSD);
+  // fFibre2LV->SetSensitiveDetector(fibreSD2);
 }
 
