@@ -53,6 +53,7 @@ public:
 private:
 
   G4LogicalVolume* fFibreLV;
+  G4LogicalVolume* fFibre2LV;
 };
 
 #endif
