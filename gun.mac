@@ -7,4 +7,4 @@
 /gps/energy 3 eV
 /gps/pos/type Point
 /gps/ang/type iso
-/gps/pos/centre 0 0 0 cm
+/gps/pos/centre 1 0 0 cm
