@@ -6,10 +6,10 @@
 #######################################
 #######################################
 #
-# gun.mac is initialised by vis.mac in the final line. 
-# Both guns are included for the sake of completeness. 
-# NOTE: The beam of protons is deliberately commented out. If you wish to select this gun, alter the vis.mac file, not this one. 
-# To select the beam of protons, enter vis.mac and comment out "/control/execute gun.mac
+# photongun.mac is initialised by vis.mac in the final line. 
+# All guns are included for the sake of completeness. 
+# NOTE: The source of protons is deliberately commented out. If you wish to select this gun, alter the vis.mac file, not this one. 
+# To select the source of protons, enter vis.mac and comment out "/control/execute protongun.mac
 #
 #######################################
 ###Uniform source of optical photons###

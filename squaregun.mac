@@ -6,10 +6,9 @@
 #######################################
 #######################################
 #
-# gun2.mac is initialised by vis.mac in the final line. 
-# Both guns are included for the sake of completeness. 
-# NOTE: The source of photons is deliberately commented out. If you wish to select this gun, alter the vis.mac file, not this one. 
-# To select the source of photons, enter vis.mac and comment out "/control/execute gun2.mac
+# squaregun.mac is initialised by vis.mac in the final line. 
+# All guns are included for the sake of completeness.  
+# To select another gun, enter vis.mac and comment out the appropriate /control/execute line
 #
 #######################################
 ###Uniform source of optical photons###
