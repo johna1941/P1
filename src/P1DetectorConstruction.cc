@@ -182,6 +182,7 @@ name = "fibre2";
 G4VSolid* fibre2 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
 fFibre2LV = new G4LogicalVolume(fibre2,liq_scint,name);
 new G4PVPlacement(0,G4ThreeVector(0.,3.8*cm,0.),fFibre2LV,name,scint_lv,0,false);
+// Need to make this rotated so that it's in the plane of the surface
 
 
   //always return the physical World
