@@ -16,4 +16,9 @@
 /gui/addIcon "Orthographic" ortho 
 
 # Run icons
-/gui/addIcon "Beam On 100" user_icon "/run/beamOn 100" harrypotter5.png
+/gui/addIcon "Beam On 10000" user_icon "/run/beamOn 10000" harrypotter5.png
+/gui/addIcon "Beam On 10" user_icon "/run/beamOn 10" harrypotter1.png
+
+# Visualisation Icons
+/gui/addIcon "Disable Visualisation" user_icon "/vis/disable" monkey.png
+/gui/addIcon "Enable Visualisation" user_icon "/vis/enable 1" illuminati.png
