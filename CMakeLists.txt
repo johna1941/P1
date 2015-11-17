@@ -56,6 +56,9 @@ set(P1_SCRIPTS
   gui.mac
   icons.mac
   harrypotter5.png
+  harrypotter1.png
+  monkey.png
+  illuminati.png
   )
 #
 # protongun.mac, photongun.mac, squaregun.mac gui.mac, icons.mac, and 
