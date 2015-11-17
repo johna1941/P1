@@ -129,4 +129,4 @@
 #/control/execute protongun.mac
 #/control/execute photongun.mac
 #/control/execute squaregun.mac
-#/control/execute gun.mac
+/control/execute gun.mac
