@@ -1,10 +1,5 @@
-#/gps/particle proton
-#/gps/energy 1 GeV
-#/gps/direction 0 0 1
-#/gps/position 0 0 -20 cm
-
-/gps/particle opticalphoton
-/gps/energy 3 eV
+/gps/particle proton
+/gps/energy 1 GeV
 /gps/pos/type Point
-/gps/ang/type iso
-/gps/pos/centre 1 0 0 cm
+/gps/pos/centre 0 -5.58 -10 cm
+/gps/direction 0 5.58 10
