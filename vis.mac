@@ -127,5 +127,6 @@
 #To select a gun, comment out the gun that you do not desire
 #
 #/control/execute protongun.mac
-/control/execute photongun.mac
+#/control/execute photongun.mac
 #/control/execute squaregun.mac
+#/control/execute gun.mac
