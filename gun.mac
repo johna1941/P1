@@ -1,5 +1,5 @@
 /gps/particle opticalphoton
 /gps/energy 6 MeV
 /gps/pos/type Point
-/gps/pos/centre 0 0 0 cm
+/gps/pos/centre 0 0 -8 cm
 /gps/direction 0 0 1

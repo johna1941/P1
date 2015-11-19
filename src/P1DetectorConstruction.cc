@@ -65,7 +65,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Materials
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
   G4Material* neoprene  = nist->FindOrBuildMaterial("G4_NEOPRENE"); // As an example, we'll be more specific closer to the time. 
-  G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_LUCITE");  // Again, an example.
+  G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_AIR");  // Again, an example.
 
   // For now give liq_scint some optical properties (from examples/extended/optical/OpNovice).
   G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();

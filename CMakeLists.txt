@@ -53,6 +53,7 @@ set(P1_SCRIPTS
   protongun.mac
   photongun.mac
   squaregun.mac
+  gun.mac
   gui.mac
   icons.mac
   harrypotter5.png
