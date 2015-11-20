@@ -42,6 +42,7 @@
 #include "G4VisAttributes.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalSkinSurface.hh"
+//#include "G4LogicalBorderSurface.hh"
 #include "P1SensitiveDetector.hh"
 #include "G4SDManager.hh"
 
@@ -67,8 +68,8 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4Material* neoprene  = nist->FindOrBuildMaterial("G4_NEOPRENE"); // As an example, we'll be more specific closer to the time. 
   G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_LUCITE");  // Again, an example.
 
-  // For now give liq_scint some optical properties (from examples/extended/optical/OpNovice).
-  G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+  // liq_scint optical properties (from examples/extended/optical/OpNovice).
+  G4MaterialPropertiesTable* scint_mpt = new G4MaterialPropertiesTable();
   G4double photonEnergy[] =
   { 2.034*eV, 2.068*eV, 2.103*eV, 2.139*eV,
     2.177*eV, 2.216*eV, 2.256*eV, 2.298*eV,
@@ -117,21 +118,33 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   assert(sizeof(scintilFast) == sizeof(photonEnergy));
   assert(sizeof(scintilSlow) == sizeof(photonEnergy));
   // Add to material properties table
-  mpt->AddProperty("RINDEX",       photonEnergy, refractiveIndex1,nEntries)
+  scint_mpt->AddProperty("RINDEX",       photonEnergy, refractiveIndex1,nEntries)
   ->SetSpline(true);
-  mpt->AddProperty("ABSLENGTH",    photonEnergy, absorption,     nEntries)
+  scint_mpt->AddProperty("ABSLENGTH",    photonEnergy, absorption,      nEntries)
   ->SetSpline(true);
-  mpt->AddProperty("FASTCOMPONENT",photonEnergy, scintilFast,     nEntries)
+  scint_mpt->AddProperty("FASTCOMPONENT",photonEnergy, scintilFast,     nEntries)
   ->SetSpline(true);
-  mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
+  scint_mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
   ->SetSpline(true);
-  mpt->AddConstProperty("SCINTILLATIONYIELD",50./MeV);
-  mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
-  mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
-  mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
-  mpt->AddConstProperty("YIELDRATIO",0.8);
-  mpt->DumpTable();
-  liq_scint->SetMaterialPropertiesTable(mpt);
+  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",50./MeV);
+  scint_mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
+  scint_mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
+  scint_mpt->AddConstProperty("YIELDRATIO",0.8);
+  G4cout << "Scintillator G4MaterialPropertiesTable\n"; scint_mpt->DumpTable();
+  liq_scint->SetMaterialPropertiesTable(scint_mpt);
+
+  // Optical properties of surface of the scintillator
+  G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
+  scint_surface->SetType(dielectric_dielectric);
+  scint_surface->SetFinish(groundfrontpainted);
+  scint_surface->SetModel(unified);
+  G4cout << "scint_surface\n"; scint_surface->DumpInfo();
+  G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();
+  G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = 1.0;
+  mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
+  ->SetSpline(true);
+  G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
 
   // World
   G4Box* solidWorld =
@@ -156,6 +169,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4String name = "orb"; // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
   G4VSolid* orb = new G4Orb(name,5.*cm);
   G4LogicalVolume* orb_lv = new G4LogicalVolume(orb,neoprene,name); //(eg.) Neoprene, can be changed to something more suitable in the future. 
+//  G4VPhysicalVolume* orb_pv =
   new G4PVPlacement(0,G4ThreeVector(),orb_lv,name,logicWorld,0,false); // Orb one inside logical world
 
   // Scintillator
@@ -163,13 +177,18 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4VSolid* scint = new G4Orb(name,4.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
 //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,liq_scint,name);
+//  G4VPhysicalVolume* scint_pv =
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
-  G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
-  scint_surface->SetType(dielectric_dielectric);
-  scint_surface->SetFinish(polishedfrontpainted);
-  scint_surface->SetModel(unified);
+
+  // Surface properties
+  G4LogicalSkinSurface* scint_skin_surface =
   new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
-  scint_surface->DumpInfo();
+//  G4LogicalBorderSurface* scint_border_surface =
+//  new G4LogicalBorderSurface("scint-border-surface",scint_pv,orb_pv,scint_surface);
+// For some reason we have to dig in to add properties...
+  G4OpticalSurface* skinSurface = dynamic_cast <G4OpticalSurface*>
+  (scint_skin_surface->GetSurface(scint_lv)->GetSurfaceProperty());
+  skinSurface->SetMaterialPropertiesTable(mptForSkin);
 
 // Fibre
 name = "fibre";
