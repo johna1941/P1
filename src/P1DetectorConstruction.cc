@@ -169,7 +169,6 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4String name = "orb"; // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
   G4VSolid* orb = new G4Orb(name,5.*cm);
   G4LogicalVolume* orb_lv = new G4LogicalVolume(orb,neoprene,name); //(eg.) Neoprene, can be changed to something more suitable in the future. 
-//  G4VPhysicalVolume* orb_pv =
   new G4PVPlacement(0,G4ThreeVector(),orb_lv,name,logicWorld,0,false); // Orb one inside logical world
 
   // Scintillator
@@ -177,18 +176,15 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4VSolid* scint = new G4Orb(name,4.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
 //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,liq_scint,name);
-//  G4VPhysicalVolume* scint_pv =
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
 
-  // Surface properties
+  // Associate surface...
   G4LogicalSkinSurface* scint_skin_surface =
   new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
-//  G4LogicalBorderSurface* scint_border_surface =
-//  new G4LogicalBorderSurface("scint-border-surface",scint_pv,orb_pv,scint_surface);
-// For some reason we have to dig in to add properties...
-  G4OpticalSurface* skinSurface = dynamic_cast <G4OpticalSurface*>
-  (scint_skin_surface->GetSurface(scint_lv)->GetSurfaceProperty());
-  skinSurface->SetMaterialPropertiesTable(mptForSkin);
+  // ...and add material properties.
+  static_cast <G4OpticalSurface*>
+  (scint_skin_surface->GetSurface(scint_lv)->GetSurfaceProperty())->
+  SetMaterialPropertiesTable(mptForSkin);
 
 // Fibre
 name = "fibre";
