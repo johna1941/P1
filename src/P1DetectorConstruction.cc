@@ -68,8 +68,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4Material* neoprene  = nist->FindOrBuildMaterial("G4_NEOPRENE"); // As an example, we'll be more specific closer to the time. 
   G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_LUCITE");  // Again, an example.
 
-  // liq_scint optical properties (from examples/extended/optical/OpNovice).
-  G4MaterialPropertiesTable* scint_mpt = new G4MaterialPropertiesTable();
+  // liq_scint optical properties (for now, water from examples/extended/optical/OpNovice).
   G4double photonEnergy[] =
   { 2.034*eV, 2.068*eV, 2.103*eV, 2.139*eV,
     2.177*eV, 2.216*eV, 2.256*eV, 2.298*eV,
@@ -117,7 +116,8 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   assert(sizeof(absorption) == sizeof(photonEnergy));
   assert(sizeof(scintilFast) == sizeof(photonEnergy));
   assert(sizeof(scintilSlow) == sizeof(photonEnergy));
-  // Add to material properties table
+  // Create material properties table and add properties
+  G4MaterialPropertiesTable* scint_mpt = new G4MaterialPropertiesTable();
   scint_mpt->AddProperty("RINDEX",       photonEnergy, refractiveIndex1,nEntries)
   ->SetSpline(true);
   scint_mpt->AddProperty("ABSLENGTH",    photonEnergy, absorption,      nEntries)
@@ -140,11 +140,13 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   scint_surface->SetFinish(groundfrontpainted);
   scint_surface->SetModel(unified);
   G4cout << "scint_surface\n"; scint_surface->DumpInfo();
+  // Create material properties table and add properties
   G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();
   G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = 1.0;
   mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
   ->SetSpline(true);
   G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
+  scint_surface->SetMaterialPropertiesTable(mptForSkin);
 
   // World
   G4Box* solidWorld =
@@ -177,21 +179,14 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,liq_scint,name);
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
-
-  // Associate surface...
-  G4LogicalSkinSurface* scint_skin_surface =
+  // Associate the optical surface
   new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
-  // ...and add material properties.
-  static_cast <G4OpticalSurface*>
-  (scint_skin_surface->GetSurface(scint_lv)->GetSurfaceProperty())->
-  SetMaterialPropertiesTable(mptForSkin);
 
 // Fibre
 name = "fibre";
 G4VSolid* fibre = new G4Tubs(name,0.,1.*cm,1.*um,0,360.*deg);
 fFibreLV = new G4LogicalVolume(fibre,liq_scint,name);
 new G4PVPlacement(0,G4ThreeVector(0.,0.,3.*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
-
 
   //always return the physical World
   return physWorld;
