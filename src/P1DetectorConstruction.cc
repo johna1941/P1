@@ -30,6 +30,8 @@
 
 #include "P1DetectorConstruction.hh"
 
+#include "P1DetectorMessenger.hh"
+
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
@@ -49,11 +51,15 @@
 #include <fstream>
 
 P1DetectorConstruction::P1DetectorConstruction()
-: fFibreLV(0)
+: fpDetectorMessenger(new P1DetectorMessenger(this))
+, fFibreLV(0)
+, fReflectivity(-1.)
 { }
 
 P1DetectorConstruction::~P1DetectorConstruction()
-{ }
+{
+  delete fpDetectorMessenger;
+}
 
 G4VPhysicalVolume* P1DetectorConstruction::Construct()
 {  
@@ -132,6 +138,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
   scint_mpt->AddConstProperty("YIELDRATIO",0.8);
   G4cout << "Scintillator G4MaterialPropertiesTable\n"; scint_mpt->DumpTable();
+  // Associate material propertiees table with liquid scintillator material.
   liq_scint->SetMaterialPropertiesTable(scint_mpt);
 
   // Optical properties of surface of the scintillator
@@ -141,11 +148,16 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   scint_surface->SetModel(unified);
   G4cout << "scint_surface\n"; scint_surface->DumpInfo();
   // Create material properties table and add properties
+  if (fReflectivity < 0.) {
+    G4cout << "Reflectivity not set!" << G4endl;
+    abort();
+  }
+  G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
   G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();
-  G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = 1.0;
   mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
   ->SetSpline(true);
   G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
+  // Associate material propertiees table with liquid scintillator "skin".
   scint_surface->SetMaterialPropertiesTable(mptForSkin);
 
   // World

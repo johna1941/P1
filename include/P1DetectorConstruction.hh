@@ -34,6 +34,7 @@
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
+class P1DetectorMessenger;
 class G4VPhysicalVolume;
 class G4LogicalVolume;
 
@@ -41,6 +42,8 @@ class G4LogicalVolume;
 
 class P1DetectorConstruction : public G4VUserDetectorConstruction
 {
+  friend class P1DetectorMessenger;
+  
 public:
 
   P1DetectorConstruction();
@@ -52,7 +55,9 @@ public:
 
 private:
 
+  P1DetectorMessenger* fpDetectorMessenger;
   G4LogicalVolume* fFibreLV;
+  G4double fReflectivity;
 };
 
 #endif
