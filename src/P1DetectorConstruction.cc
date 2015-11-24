@@ -64,7 +64,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 
   // Materials
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
-  G4Material* neoprene  = nist->FindOrBuildMaterial("G4_MUSCLE_SKELETAL_ICRP"); // As an example, we'll be more specific closer to the time. 
+  G4Material* neoprene  = nist->FindOrBuildMaterial("G4_NEOPRENE"); // As an example, we'll be more specific closer to the time. 
   G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_AIR");  // Again, an example.
 G4Material* PbBalloon = nist->FindOrBuildMaterial("G4_Pb");
 
@@ -155,13 +155,13 @@ G4Material* PbBalloon = nist->FindOrBuildMaterial("G4_Pb");
                      
   // Orb
   G4String name = "orb"; // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
-  G4VSolid* orb = new G4Orb(name,5.*cm);
+  G4VSolid* orb = new G4Orb(name,4.8*cm);
   G4LogicalVolume* orb_lv = new G4LogicalVolume(orb,neoprene,name); //(eg.) Neoprene, can be changed to something more suitable in the future. 
   new G4PVPlacement(0,G4ThreeVector(),orb_lv,name,logicWorld,0,false); // Orb one inside logical world
 
   // Scintillator
   name = "scintillator";
-  G4VSolid* scint = new G4Orb(name,4.2*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
+  G4VSolid* scint = new G4Orb(name,4.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
 //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,liq_scint,name);
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
@@ -177,7 +177,7 @@ G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
 
 // Lead Balloon
 name = "balloon";
-G4VSolid* balloon = new G4Orb(name,4.1925*cm);
+G4VSolid* balloon = new G4Orb(name,3.9925*cm);
 G4LogicalVolume* balloon_lv = new G4LogicalVolume(balloon,PbBalloon,name);
 new G4PVPlacement(0,G4ThreeVector(),balloon_lv,name,scint_lv,0,false);
 
@@ -185,7 +185,7 @@ new G4PVPlacement(0,G4ThreeVector(),balloon_lv,name,scint_lv,0,false);
 name = "fibre";
 G4VSolid* fibre = new G4Tubs(name,0.,0.12*cm,1.*nm,0,360.*deg);
 fFibreLV = new G4LogicalVolume(fibre,liq_scint,name);
-new G4PVPlacement(0,G4ThreeVector(0.,0.,-4.195*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
+new G4PVPlacement(0,G4ThreeVector(0.,0.,-3.995*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
 
 /*// Fibre2
 name = "fibre2";
