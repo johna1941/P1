@@ -29,7 +29,7 @@
 /// \brief Implementation of the P1DetectorConstruction class
 
 #include "P1DetectorConstruction.hh"
-
+#include "P1DetectorMessenger.hh"
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
@@ -48,7 +48,8 @@
 #include <fstream>
 
 P1DetectorConstruction::P1DetectorConstruction()
-: fFibreLV(0)
+: fpDetectorMessenger(new P1DetectorMessenger(this)), fFibreLV(0), fReflectivity(-1.) // (-1.) initialises it to -1, which is physically impossible. This is a good check to make sure that you've set it. 
+
 { }
 
 P1DetectorConstruction::~P1DetectorConstruction()
@@ -125,13 +126,24 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   ->SetSpline(true);
   mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
   ->SetSpline(true);
-  mpt->AddConstProperty("SCINTILLATIONYIELD",50./MeV);
-  mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
-  mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
-  mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
-  mpt->AddConstProperty("YIELDRATIO",0.8);
-  mpt->DumpTable();
-  liq_scint->SetMaterialPropertiesTable(mpt);
+  Scint_mpt->AddConstProperty("SCINTILLATIONYIELD",50./MeV);
+  Scint_mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
+  Scint_mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  Scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
+  Scint_mpt->AddConstProperty("YIELDRATIO",0.8);
+  G4cout << "Scint G4MaterialPropertiesTable\n"; Scint_mpt->DumpTable();
+  liq_scint->SetMaterialPropertiesTable(Scint_mpt);
+	if (fReflectivity < 0.) {
+		G4cout << "Reflectivity not set!" << G4endl;
+		abort;	
+	}
+	G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
+	G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();	
+	mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
+	->SetSpline(true);
+	G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
+	scint_surface->SetMaterialPropertiesTable(mptForSkin); // Associates the material properties with the surface of the liquid scintillator. 
+
 
   // World
   G4Box* solidWorld =

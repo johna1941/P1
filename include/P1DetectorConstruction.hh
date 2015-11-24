@@ -34,6 +34,7 @@
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
+class P1DetectorMessenger;
 class G4VPhysicalVolume;
 class G4LogicalVolume;
 
@@ -42,7 +43,7 @@ class G4LogicalVolume;
 class P1DetectorConstruction : public G4VUserDetectorConstruction
 {
 public:
-
+  friend class P1DetectorMessenger; // Tells it that it'll have access to the "private" parts
   P1DetectorConstruction();
   virtual ~P1DetectorConstruction();
 
@@ -52,8 +53,10 @@ public:
 
 private:
 
+  P1DetectorMessenger* fpDetectorMessenger; //Asks for memory to store this
   G4LogicalVolume* fFibreLV;
   G4LogicalVolume* fFibre2LV;
+  G4double fReflectivity;
 };
 
 #endif
