@@ -118,14 +118,3 @@
 ##########################################################################
 #/vis/viewer/flush
 #
-###############################
-### Initialise particle gun ###
-###############################
-#Pick a gun to use. 
-#gun.mac is a volume source of optical photons, inside of the cavity
-#gun2.mac is a beam of protons directed at the cavity
-#To select a gun, comment out the gun that you do not desire
-#
-#/control/execute protongun.mac
-/control/execute photongun.mac
-#/control/execute squaregun.mac
