@@ -85,17 +85,18 @@ void P1RunAction::EndOfRunAction(const G4Run* run)
   //
   if (IsMaster()) {
     G4cout
-    << "\n--------------------End of Global Run-----------------------";
+    << "\n--------------------End of Global Run-----------------------";  
+  G4cerr
+  << "\n The run consists of " << nofEvents << " " << runCondition
+  << "\n Number of photons reaching sensitive detector: "
+  << numberOfPhotons
+  << "\n------------------------------------------------------------"
+  << G4endl;
   }
   else {
     G4cout
     << "\n--------------------End of Local Run------------------------";
   }
 
-  G4cout
-  << "\n The run consists of " << nofEvents << " " << runCondition
-  << "\n Number of photons reaching sensitive detector: "
-  << numberOfPhotons
-  << "\n------------------------------------------------------------"
-  << G4endl;
+
 }

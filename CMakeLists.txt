@@ -48,7 +48,6 @@ set(P1_SCRIPTS
   P1.out
   init_vis.mac
   run1.mac
-  run2.mac
   vis.mac
   protongun.mac
   photongun.mac
