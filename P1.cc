@@ -69,7 +69,7 @@ int main(int argc,char** argv)
   G4Random::setTheSeed(seed);  // Needed for MT mode
 
   // Choose the Random engine
-  G4Random::setTheEngine(new CLHEP::RanecuEngine);
+  // G4Random::setTheEngine(new CLHEP::RanecuEngine);
   
   // Construct the default run manager
   //
