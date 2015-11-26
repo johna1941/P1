@@ -42,8 +42,10 @@ class G4LogicalVolume;
 
 class P1DetectorConstruction : public G4VUserDetectorConstruction
 {
+friend class P1DetectorMessenger; // Tells it that it'll have access to the "private" parts
+
 public:
-  friend class P1DetectorMessenger; // Tells it that it'll have access to the "private" parts
+  
   P1DetectorConstruction();
   virtual ~P1DetectorConstruction();
 
