@@ -8,7 +8,9 @@
 /process/optical/verbose 0	# Supress output to allow large numbers of photons to be used with optical processes enabled
 #
 # Change the default number of threads (in multi-threaded mode)
-/run/numberOfThreads 4
+/run/numberOfThreads 8
+#
+/PDMPhys/set/reflectivity 0.5
 #
 # Initialize kernel
 /run/initialize
