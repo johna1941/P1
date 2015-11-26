@@ -42,6 +42,7 @@
 #include "G4VisAttributes.hh"
 #include "G4OpticalSurface.hh"
 #include "G4LogicalSkinSurface.hh"
+// #include "G4LogicalBorderSurface.hh"
 #include "P1SensitiveDetector.hh"
 #include "G4SDManager.hh"
 
@@ -53,7 +54,9 @@ P1DetectorConstruction::P1DetectorConstruction()
 { }
 
 P1DetectorConstruction::~P1DetectorConstruction()
-{ }
+{ 
+delete fpDetectorMessenger;
+}
 
 G4VPhysicalVolume* P1DetectorConstruction::Construct()
 {  
@@ -69,7 +72,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_LUCITE");  // Again, an example.
 
   // For now give liq_scint some optical properties (from examples/extended/optical/OpNovice).
-  G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
   G4double photonEnergy[] =
   { 2.034*eV, 2.068*eV, 2.103*eV, 2.139*eV,
     2.177*eV, 2.216*eV, 2.256*eV, 2.298*eV,
@@ -117,32 +120,44 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   assert(sizeof(absorption) == sizeof(photonEnergy));
   assert(sizeof(scintilFast) == sizeof(photonEnergy));
   assert(sizeof(scintilSlow) == sizeof(photonEnergy));
+// Create material properties table and add properties
+  G4MaterialPropertiesTable* scint_mpt = new G4MaterialPropertiesTable();
   // Add to material properties table
-  mpt->AddProperty("RINDEX",       photonEnergy, refractiveIndex1,nEntries)
+  scint_mpt->AddProperty("RINDEX",       photonEnergy, refractiveIndex1,nEntries)
   ->SetSpline(true);
-  mpt->AddProperty("ABSLENGTH",    photonEnergy, absorption,     nEntries)
+  scint_mpt->AddProperty("ABSLENGTH",    photonEnergy, absorption,     nEntries)
   ->SetSpline(true);
-  mpt->AddProperty("FASTCOMPONENT",photonEnergy, scintilFast,     nEntries)
+  scint_mpt->AddProperty("FASTCOMPONENT",photonEnergy, scintilFast,     nEntries)
   ->SetSpline(true);
-  mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
+  scint_mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
   ->SetSpline(true);
-  Scint_mpt->AddConstProperty("SCINTILLATIONYIELD",50./MeV);
-  Scint_mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
-  Scint_mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
-  Scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
-  Scint_mpt->AddConstProperty("YIELDRATIO",0.8);
-  G4cout << "Scint G4MaterialPropertiesTable\n"; Scint_mpt->DumpTable();
-  liq_scint->SetMaterialPropertiesTable(Scint_mpt);
+  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",50./MeV);
+  scint_mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
+  scint_mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
+  scint_mpt->AddConstProperty("YIELDRATIO",0.8);
+  G4cout << "Scint G4MaterialPropertiesTable\n"; scint_mpt->DumpTable();
+// Associate material properties table with the liquid scintillator material
+  liq_scint->SetMaterialPropertiesTable(scint_mpt);
+
+// Optical properties of the surface of the scintillator
+G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
+scint_surface->SetType(dielectric_dielectric);
+scint_surface->SetFinish(groundfrontpainted);
+scint_surface->SetModel(unified);
+G4cout << "scint_surface\n"; scint_surface->DumpInfo();
+// Create material properties table and add properties
 	if (fReflectivity < 0.) {
 		G4cout << "Reflectivity not set!" << G4endl;
 		abort;	
 	}
-	G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
-	G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();	
-	mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
-	->SetSpline(true);
-	G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
-	scint_surface->SetMaterialPropertiesTable(mptForSkin); // Associates the material properties with the surface of the liquid scintillator. 
+G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
+G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();	
+mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
+->SetSpline(true);
+G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
+// Associates the material properties with the surface of the liquid scintillator. 
+scint_surface->SetMaterialPropertiesTable(mptForSkin); 
 
 
   // World
@@ -176,12 +191,8 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,liq_scint,name);
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
-  G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
-  scint_surface->SetType(dielectric_dielectric);
-  scint_surface->SetFinish(polishedfrontpainted);
-  scint_surface->SetModel(unified);
+// Associate the optical surface
   new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
-  scint_surface->DumpInfo();
 
 // Fibre1
 name = "fibre";
