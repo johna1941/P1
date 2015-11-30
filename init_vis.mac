@@ -9,13 +9,16 @@
 #
 # Change the default number of threads (in multi-threaded mode)
 /run/numberOfThreads 8
-#
+
+# Optical commands seem to be required to be set before run initialisation.
+#/process/optical/processActivation Cerenkov false
+#/process/optical/processActivation Scintillation false
+
+# run/initialize invokes DetectorConstruction::Construct, so do this here.
 /PDMPhys/set/reflectivity 0.5
 
 # Initialize kernel
 /run/initialize
-#
-
 
 # Visualization setting
 /control/execute vis.mac
