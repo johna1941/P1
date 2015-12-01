@@ -64,7 +64,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 
   // Materials
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
-  G4Material* neoprene  = nist->FindOrBuildMaterial("G4_NEOPRENE"); // As an example, we'll be more specific closer to the time. 
+  G4Material* neoprene  = nist->FindOrBuildMaterial("G4_MUSCLE_SKELETAL_ICRP"); // As an example, we'll be more specific closer to the time. 
   G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_AIR");  // Again, an example.
 G4Material* PbBalloon = nist->FindOrBuildMaterial("G4_Pb");
 
@@ -155,7 +155,7 @@ G4Material* PbBalloon = nist->FindOrBuildMaterial("G4_Pb");
                      
   // Orb
   G4String name = "orb"; // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
-  G4VSolid* orb = new G4Orb(name,4.8*cm);
+  G4VSolid* orb = new G4Orb(name,10.*cm);
   G4LogicalVolume* orb_lv = new G4LogicalVolume(orb,neoprene,name); //(eg.) Neoprene, can be changed to something more suitable in the future. 
   new G4PVPlacement(0,G4ThreeVector(),orb_lv,name,logicWorld,0,false); // Orb one inside logical world
 
