@@ -36,11 +36,14 @@
 
 class G4VPhysicalVolume;
 class G4LogicalVolume;
+class P1DetectorMessenger;
 
 /// Detector construction class to define materials and geometry.
 
 class P1DetectorConstruction : public G4VUserDetectorConstruction
 {
+  friend class P1DetectorMessenger;
+  
 public:
 
   P1DetectorConstruction();
@@ -52,8 +55,10 @@ public:
 
 private:
 
+  P1DetectorMessenger* fpDetectorMessenger;
   G4LogicalVolume* fFibreLV;
   G4LogicalVolume* fFibre2LV;
+  G4double fReflectivity;
 };
 
 #endif

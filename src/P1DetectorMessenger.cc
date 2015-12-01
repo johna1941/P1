@@ -6,7 +6,7 @@
 #include "G4UIcommand.hh"
 #include "G4UIcmdWithADouble.hh"
 #include <sstream>
-/* 
+
 P1DetectorMessenger::P1DetectorMessenger(P1DetectorConstruction * myDet)
 :myDetector(myDet)
 {
@@ -33,4 +33,4 @@ void P1DetectorMessenger::SetNewValue(G4UIcommand * command,G4String newValues)
     myDetector->fReflectivity = fpReflectivityCommand->GetNewDoubleValue(newValues);
   }
 }
-*/
+

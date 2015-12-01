@@ -29,7 +29,7 @@
 /// \brief Implementation of the P1DetectorConstruction class
 
 #include "P1DetectorConstruction.hh"
-// #include "P1DetectorMessenger.hh"
+#include "P1DetectorMessenger.hh"
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
@@ -42,20 +42,22 @@
 #include "G4VisAttributes.hh"
 #include "P1SensitiveDetector.hh"
 #include "G4SDManager.hh"
-// #include "G4OpticalSurface.hh"
-// #include "G4LogicalSkinSurface.hh"
+ #include "G4OpticalSurface.hh"
+ #include "G4LogicalSkinSurface.hh"
 // #include "G4LogicalBorderSurface.hh"
 
 #include <fstream>
 
 P1DetectorConstruction::P1DetectorConstruction()
-: fFibreLV(0)
-// : fpDetectorMessenger(new P1DetectorMessenger(this)), fFibreLV(0), fReflectivity(-1.) // (-1.) initialises it to -1, which is physically impossible. This is a good check to make sure that you've set it. 
+: fpDetectorMessenger(new P1DetectorMessenger(this))
+, fFibreLV(0)
+, fFibre2LV(0)
+, fReflectivity(-1.) // (-1.) initialises it to -1, which is physically impossible. This is a good check to make sure that you've set it.
 { }
 
 P1DetectorConstruction::~P1DetectorConstruction()
 {
-// delete fpDetectorMessenger; 
+  delete fpDetectorMessenger;
 }
 
 G4VPhysicalVolume* P1DetectorConstruction::Construct()
@@ -141,7 +143,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 // Associate material properties table with the liquid scintillator material
   liq_scint->SetMaterialPropertiesTable(scint_mpt);
 
-  /* Optical properties of the surface of the scintillator
+  // Optical properties of the surface of the scintillator
 G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
 scint_surface->SetType(dielectric_dielectric);
 scint_surface->SetFinish(groundfrontpainted);
@@ -150,15 +152,15 @@ G4cout << "scint_surface\n"; scint_surface->DumpInfo();
 // Create material properties table and add properties
   if (fReflectivity < 0.) {
     G4cout << "Reflectivity not set!" << G4endl;
-    abort;  
+    abort();
   }
-  /*G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
+G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
 G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();  
 mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
 ->SetSpline(true);
-G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();*/
+G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
 // Associates the material properties with the surface of the liquid scintillator. 
-//scint_surface->SetMaterialPropertiesTable(mptForSkin); 
+scint_surface->SetMaterialPropertiesTable(mptForSkin); 
 
 
   // World
@@ -191,9 +193,9 @@ G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();*/
   G4VSolid* scint = new G4Orb(name,4.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
 //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere. 
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,liq_scint,name);
- new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one. 
- // Associate the optical surface
- //  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
+  new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
+  // Associate the optical surface
+  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
 
 // Fibre1
 name = "fibre";
