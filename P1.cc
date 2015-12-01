@@ -40,6 +40,7 @@
 #include "G4Timer.hh"
 #include "G4UImanager.hh"
 #include "QBBC.hh"
+#include "G4OpticalPhysics.hh"
 
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
@@ -87,6 +88,7 @@ int main(int argc,char** argv)
 
   // Physics list
   G4VModularPhysicsList* physicsList = new QBBC;
+  physicsList->RegisterPhysics(new G4OpticalPhysics);
   physicsList->SetVerboseLevel(1);
   runManager->SetUserInitialization(physicsList);
     
