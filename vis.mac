@@ -66,7 +66,7 @@
 #/vis/modeling/trajectories/drawByParticleID-0/default/setDrawStepPts true
 # To select or override default colours (note: e+ is blue by default):
 #/vis/modeling/trajectories/list
-#/vis/modeling/trajectories/drawByParticleID-0/set e+ yellow
+#/vis/modeling/trajectories/drawByParticleID-0/set opticalphoton yellow
 #
 # To superimpose all of the events from a given run:
 /vis/scene/endOfEventAction accumulate
@@ -128,6 +128,6 @@
 #gun2.mac is a beam of protons directed at the cavity
 #To select a gun, comment out the gun that you do not desire
 #
-#/control/execute protongun.mac
-/control/execute photongun.mac
+/control/execute protongun.mac
+#/control/execute photongun.mac
 #/control/execute squaregun.mac
