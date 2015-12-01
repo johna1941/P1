@@ -55,7 +55,7 @@ P1DetectorConstruction::P1DetectorConstruction()
 
 P1DetectorConstruction::~P1DetectorConstruction()
 {
-delete fpDetectorMessenger; 
+// delete fpDetectorMessenger; 
 }
 
 G4VPhysicalVolume* P1DetectorConstruction::Construct()
