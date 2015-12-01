@@ -29,7 +29,7 @@
 /// \brief Implementation of the P1DetectorConstruction class
 
 #include "P1DetectorConstruction.hh"
-
+// #include "P1DetectorMessenger.hh"
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
@@ -42,15 +42,21 @@
 #include "G4VisAttributes.hh"
 #include "P1SensitiveDetector.hh"
 #include "G4SDManager.hh"
+// #include "G4OpticalSurface.hh"
+// #include "G4LogicalSkinSurface.hh"
+// #include "G4LogicalBorderSurface.hh"
 
 #include <fstream>
 
 P1DetectorConstruction::P1DetectorConstruction()
 : fFibreLV(0)
+// : fpDetectorMessenger(new P1DetectorMessenger(this)), fFibreLV(0), fReflectivity(-1.) // (-1.) initialises it to -1, which is physically impossible. This is a good check to make sure that you've set it. 
 { }
 
 P1DetectorConstruction::~P1DetectorConstruction()
-{ }
+{
+delete fpDetectorMessenger; 
+}
 
 G4VPhysicalVolume* P1DetectorConstruction::Construct()
 {  
@@ -64,6 +70,96 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
   G4Material* neoprene  = nist->FindOrBuildMaterial("G4_NEOPRENE"); // As an example, we'll be more specific closer to the time. 
   G4Material* lucite  = nist->FindOrBuildMaterial("G4_LUCITE");
+
+/*
+  // For now give liq_scint some optical properties (from examples/extended/optical/OpNovice).
+
+  G4double photonEnergy[] =
+  { 2.034*eV, 2.068*eV, 2.103*eV, 2.139*eV,
+    2.177*eV, 2.216*eV, 2.256*eV, 2.298*eV,
+    2.341*eV, 2.386*eV, 2.433*eV, 2.481*eV,
+    2.532*eV, 2.585*eV, 2.640*eV, 2.697*eV,
+    2.757*eV, 2.820*eV, 2.885*eV, 2.954*eV,
+    3.026*eV, 3.102*eV, 3.181*eV, 3.265*eV,
+    3.353*eV, 3.446*eV, 3.545*eV, 3.649*eV,
+    3.760*eV, 3.877*eV, 4.002*eV, 4.136*eV };
+  G4double refractiveIndex1[] =
+  { 1.3435, 1.344,  1.3445, 1.345,  1.3455,
+    1.346,  1.3465, 1.347,  1.3475, 1.348,
+    1.3485, 1.3492, 1.35,   1.3505, 1.351,
+    1.3518, 1.3522, 1.3530, 1.3535, 1.354,
+    1.3545, 1.355,  1.3555, 1.356,  1.3568,
+    1.3572, 1.358,  1.3585, 1.359,  1.3595,
+    1.36,   1.3608};
+  G4double absorption[] =
+//  {3.448*m,  4.082*m,  6.329*m,  9.174*m, 12.346*m, 13.889*m,
+//    15.152*m, 17.241*m, 18.868*m, 20.000*m, 26.316*m, 35.714*m,
+//    45.455*m, 47.619*m, 52.632*m, 52.632*m, 55.556*m, 52.632*m,
+//    52.632*m, 47.619*m, 45.455*m, 41.667*m, 37.037*m, 33.333*m,
+//    30.000*m, 28.500*m, 27.000*m, 24.500*m, 22.000*m, 19.500*m,
+//    17.500*m, 14.500*m };
+  { 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
+    3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
+    3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
+    3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
+    3.*m, 3.*m, 3.*m, 3.*m };
+  G4double scintilFast[] =
+  { 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
+    1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
+    1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
+    1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
+    1.00, 1.00, 1.00, 1.00 };
+  G4double scintilSlow[] =
+  { 0.01, 1.00, 2.00, 3.00, 4.00, 5.00, 6.00,
+    7.00, 8.00, 9.00, 8.00, 7.00, 6.00, 4.00,
+    3.00, 2.00, 1.00, 0.01, 1.00, 2.00, 3.00,
+    4.00, 5.00, 6.00, 7.00, 8.00, 9.00, 8.00,
+    7.00, 6.00, 5.00, 4.00 };
+  // Health check
+  const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
+  assert(sizeof(refractiveIndex1) == sizeof(photonEnergy));
+  assert(sizeof(absorption) == sizeof(photonEnergy));
+  assert(sizeof(scintilFast) == sizeof(photonEnergy));
+  assert(sizeof(scintilSlow) == sizeof(photonEnergy));
+// Create material properties table and add properties
+  G4MaterialPropertiesTable* scint_mpt = new G4MaterialPropertiesTable();
+  // Add to material properties table
+  scint_mpt->AddProperty("RINDEX",       photonEnergy, refractiveIndex1,nEntries)
+  ->SetSpline(true);
+  scint_mpt->AddProperty("ABSLENGTH",    photonEnergy, absorption,     nEntries)
+  ->SetSpline(true);
+  scint_mpt->AddProperty("FASTCOMPONENT",photonEnergy, scintilFast,     nEntries)
+  ->SetSpline(true);
+  scint_mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
+  ->SetSpline(true);
+  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",12000./MeV);
+  scint_mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
+  scint_mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
+  scint_mpt->AddConstProperty("YIELDRATIO",0.8);
+  G4cout << "Scint G4MaterialPropertiesTable\n"; scint_mpt->DumpTable();
+// Associate material properties table with the liquid scintillator material
+  liq_scint->SetMaterialPropertiesTable(scint_mpt);
+
+// Optical properties of the surface of the scintillator
+G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
+scint_surface->SetType(dielectric_dielectric);
+scint_surface->SetFinish(groundfrontpainted);
+scint_surface->SetModel(unified);
+G4cout << "scint_surface\n"; scint_surface->DumpInfo();
+// Create material properties table and add properties
+  if (fReflectivity < 0.) {
+    G4cout << "Reflectivity not set!" << G4endl;
+    abort;  
+  }
+G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
+G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();  
+mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
+->SetSpline(true);
+G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
+// Associates the material properties with the surface of the liquid scintillator. 
+scint_surface->SetMaterialPropertiesTable(mptForSkin); 
+*/
 
   // World
   G4Box* solidWorld =
@@ -96,6 +192,8 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere. 
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,lucite,name);
  new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one. 
+ // Associate the optical surface
+// new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
 
 // Fibre1
 name = "fibre";
