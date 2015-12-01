@@ -88,8 +88,8 @@ int main(int argc,char** argv)
 
   // Physics list
   G4VModularPhysicsList* physicsList = new QBBC;
-  physicsList->RegisterPhysics(new G4OpticalPhysics);
-
+  physicsList->RegisterPhysics(new G4OpticalPhysics); // Should have added all optical processes, as detailed by JA on 30/11 email
+  
   physicsList->SetVerboseLevel(1);
   runManager->SetUserInitialization(physicsList);
     
