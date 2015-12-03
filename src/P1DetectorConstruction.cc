@@ -45,6 +45,10 @@
 // #include "G4OpticalSurface.hh"
 // #include "G4LogicalSkinSurface.hh"
 // #include "G4LogicalBorderSurface.hh"
+#include "G4Element.hh"
+#include "G4Material.hh"
+#include "G4UnitsTable.hh"
+// The above three are for the creation of ABS
 
 #include <fstream>
 
@@ -71,39 +75,41 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   ///////////////////////////////////
   ///// Material: Construct ABS /////
   //////////////////////////////////
-  G4double z, a, fractionmass, density;
   G4String name, symbol;
-  G4int ncomponents;
-  // a = 104.14*g/mole;
+  G4double density;
+  G4int ncomponents, natoms;
+  G4double fractionmass;
+  G4UnitDefinition::BuildUnitsTable();
+
   // Carbon
-  G4Material* C = nist->FindOrBuildMaterial("G4_C");
+  G4Element* C = nist->FindOrBuildElement("C");
   // Hydrogen
-  G4Material* H = nist->FindOrBuildMaterial("G4_H");
+  G4Element* H = nist->FindOrBuildElement("H");
   // Nitrogen
-  G4Material* N = nist->FindOrBuildMaterial("G4_N");
+  G4Element* N = nist->FindOrBuildElement("N");
   //Styrene
   density = 0.909*g/cm3;
-  G4Material* styrene = new G4Material(name="Styrene",density,ncomponents=2);
-  styrene->AddElement(C,fractionmass=50*perCent); // It appears, despite being a fraction of *mass*, this is just the ratio of number of atoms
-  styrene->AddElement(H,fractionmass=50*perCent);
+  G4Material* styrene = new G4Material(name = "Styrene", density, ncomponents=2);
+  styrene->AddElement(C, natoms=8); 
+  styrene->AddElement(H, natoms=8);
   //1,3-Butadiene
   density = 0.6149*g/cm3; // At 25\degree (solid)
-  G4Material* buta = new G4Material(name="1,3-Butadiene",density,ncomponents=2);
-  buta->AddElement(C,fractionmass=40*perCent);
-  buta->AddElement(H,fractionmass=60*perCent);
+  G4Material* buta = new G4Material(name = "1,3-Butadiene", density, ncomponents=2);
+  buta->AddElement(C, natoms=4);
+  buta->AddElement(H, natoms=6);
   //Acrylonitrile
   density = 0.81*g/cm3;
-  G4Material* acryl = new G4Material(name="Acrylonitrile",density,ncomponents=3);
-  acryl->AddElement(C,fractionmass=42.857*perCent); 
-  acryl->AddElement(H,fractionmass=42.857*perCent);
-  acryl->AddElement(N,fractionmass=14.286*perCent);
+  G4Material* acryl = new G4Material(name = "Acrylonitrile", density, ncomponents=3);
+  acryl->AddElement(C, natoms=3); 
+  acryl->AddElement(H, natoms=3);
+  acryl->AddElement(N, natoms=1);
 
   // ABS
   density = 1.08*g/cm3; //1.06-1.08, according to wikipedia
-  G4Material* ABS = new G4Material(name="G4_ABS",density,ncomponents=3);
-  ABS->AddMaterial(styrene,fractionmass=55*perCent); // 40-60%
-  ABS->AddMaterial(buta,fractionmass=20*perCent); // 5-30%
-  ABS->AddMaterial(acryl,fractionmass=25*perCent); //15-35%
+  G4Material* ABS = new G4Material(name = "G4_ABS", density, ncomponents=3);
+  ABS->AddMaterial(styrene, fractionmass=55*perCent); // 40-60%
+  ABS->AddMaterial(buta, fractionmass=20*perCent); // 5-30%
+  ABS->AddMaterial(acryl, fractionmass=25*perCent); //15-35%
 
 
 
@@ -186,7 +192,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 // Associate material properties table with the liquid scintillator material
   liq_scint->SetMaterialPropertiesTable(scint_mpt);
 
-  /* Optical properties of the surface of the scintillator
+  /*Optical properties of the surface of the scintillator
 G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
 scint_surface->SetType(dielectric_dielectric);
 scint_surface->SetFinish(groundfrontpainted);
@@ -201,7 +207,7 @@ G4cout << "scint_surface\n"; scint_surface->DumpInfo();
 G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();  
 mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
 ->SetSpline(true);
-G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();*/
+G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
 // Associates the material properties with the surface of the liquid scintillator. 
 //scint_surface->SetMaterialPropertiesTable(mptForSkin); 
 
@@ -226,14 +232,14 @@ G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();*/
                       checkOverlaps);        //overlaps checking
                      
   // Orb
-  G4String name = "orb"; // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
-  G4VSolid* orb = new G4Orb(name,5.*cm);
+  // G4String name = "orb"; // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
+  G4VSolid* orb = new G4Orb(name="orb",5.*cm);
   G4LogicalVolume* orb_lv = new G4LogicalVolume(orb,neoprene,name); //(eg.) Neoprene, can be changed to something more suitable in the future. 
   new G4PVPlacement(0,G4ThreeVector(),orb_lv,name,logicWorld,0,false); // Orb one inside logical world
 
   // Scintillator
-  name = "scintillator";
-  G4VSolid* scint = new G4Orb(name,4.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
+  // name = "scintillator";
+  G4VSolid* scint = new G4Orb(name="scintillator",4.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
 //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere. 
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,liq_scint,name);
  new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one. 
