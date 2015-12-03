@@ -66,11 +66,56 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Option to switch on/off checking of volumes overlaps
   G4bool checkOverlaps = true;
 
+
+
+  ///////////////////////////////////
+  ///// Material: Construct ABS /////
+  //////////////////////////////////
+  G4double z, a, fractionmass, density;
+  G4String name, symbol;
+  G4int ncomponents;
+  // a = 104.14*g/mole;
+  // Carbon
+  G4Material* C = nist->FindOrBuildMaterial("G4_C");
+  // Hydrogen
+  G4Material* H = nist->FindOrBuildMaterial("G4_H");
+  // Nitrogen
+  G4Material* N = nist->FindOrBuildMaterial("G4_N");
+  //Styrene
+  density = 0.909*g/cm3;
+  G4Material* styrene = new G4Material(name="Styrene",density,ncomponents=2);
+  styrene->AddElement(C,fractionmass=50*perCent); // It appears, despite being a fraction of *mass*, this is just the ratio of number of atoms
+  styrene->AddElement(H,fractionmass=50*perCent);
+  //1,3-Butadiene
+  density = 0.6149*g/cm3; // At 25\degree (solid)
+  G4Material* buta = new G4Material(name="1,3-Butadiene",density,ncomponents=2);
+  buta->AddElement(C,fractionmass=40*perCent);
+  buta->AddElement(H,fractionmass=60*perCent);
+  //Acrylonitrile
+  density = 0.81*g/cm3;
+  G4Material* acryl = new G4Material(name="Acrylonitrile",density,ncomponents=3);
+  acryl->AddElement(C,fractionmass=42.857*perCent); 
+  acryl->AddElement(H,fractionmass=42.857*perCent);
+  acryl->AddElement(N,fractionmass=14.286*perCent);
+
+  // ABS
+  density = 1.08*g/cm3; //1.06-1.08, according to wikipedia
+  G4Material* ABS = new G4Material(name="G4_ABS",density,ncomponents=3);
+  ABS->AddMaterial(styrene,fractionmass=55*perCent); // 40-60%
+  ABS->AddMaterial(buta,fractionmass=20*perCent); // 5-30%
+  ABS->AddMaterial(acryl,fractionmass=25*perCent); //15-35%
+
+
+
+
+
+
+
+
   // Materials
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
-  G4Material* neoprene  = nist->FindOrBuildMaterial("G4_NEOPRENE"); // As an example, we'll be more specific closer to the time. 
+  G4Material* neoprene  = nist->FindOrBuildMaterial("G4_ABS"); // As an example, we'll be more specific closer to the time. 
   G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_LUCITE");
-
 
   // For now give liq_scint some optical properties (from examples/extended/optical/OpNovice).
 
