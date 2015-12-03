@@ -207,7 +207,7 @@ G4cout << "scint_surface\n"; scint_surface->DumpInfo();
 G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();  
 mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
 ->SetSpline(true);
-G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
+G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();*/
 // Associates the material properties with the surface of the liquid scintillator. 
 //scint_surface->SetMaterialPropertiesTable(mptForSkin); 
 
@@ -256,7 +256,7 @@ new G4PVPlacement(0,G4ThreeVector(0.,0.,3.9*cm),fFibreLV,name,scint_lv,0,false);
 name = "fibre2";
 G4VSolid* fibre2 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
 fFibre2LV = new G4LogicalVolume(fibre2,neoprene,name);
-new G4PVPlacement(0,G4ThreeVector(0.,3.9*cm,3.9*cm),fFibre2LV,name,scint_lv,0,false);
+new G4PVPlacement(0,G4ThreeVector(0.,3.9*cm,0.*cm),fFibre2LV,name,scint_lv,0,false);
 
 
   //always return the physical World
