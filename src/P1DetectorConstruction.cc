@@ -29,7 +29,7 @@
 /// \brief Implementation of the P1DetectorConstruction class
 
 #include "P1DetectorConstruction.hh"
-
+// #include "P1DetectorMessenger.hh"
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
@@ -44,15 +44,20 @@
 #include "G4LogicalSkinSurface.hh"
 #include "P1SensitiveDetector.hh"
 #include "G4SDManager.hh"
-
+// #include "G4OpticalSurface.hh"
+// #include "G4LogicalSkinSurface.hh"
+// #include "G4LogicalBorderSurface.hh"
 #include <fstream>
 
 P1DetectorConstruction::P1DetectorConstruction()
 : fFibreLV(0)
+// : fpDetectorMessenger(new P1DetectorMessenger(this)), fFibreLV(0), fReflectivity(-1.) // (-1.) initialises it to -1, which is physically impossible. This is a good check to make sure that you've set it.
 { }
 
 P1DetectorConstruction::~P1DetectorConstruction()
-{ }
+{ 
+// delete fpDetectorMessenger; 
+}
 
 G4VPhysicalVolume* P1DetectorConstruction::Construct()
 {  
@@ -62,9 +67,60 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Option to switch on/off checking of volumes overlaps
   G4bool checkOverlaps = true;
 
+
+
+
+  ///////////////////////////////////
+  ///// Material: Construct ABS /////
+  //////////////////////////////////
+#include "G4Element.hh"
+#include "G4Material.hh"
+#include "G4UnitsTable.hh"
+// The above three are for the creation of ABS
+  G4String name, symbol;
+  G4double density;
+  G4int ncomponents, natoms;
+  G4double fractionmass;
+  G4UnitDefinition::BuildUnitsTable();
+
+  // Carbon
+  G4Element* C = nist->FindOrBuildElement("C");
+  // Hydrogen
+  G4Element* H = nist->FindOrBuildElement("H");
+  // Nitrogen
+  G4Element* N = nist->FindOrBuildElement("N");
+  //Styrene
+  density = 0.909*g/cm3;
+  G4Material* styrene = new G4Material(name = "Styrene", density, ncomponents=2);
+  styrene->AddElement(C, natoms=8); 
+  styrene->AddElement(H, natoms=8);
+  //1,3-Butadiene
+  density = 0.6149*g/cm3; // At 25\degree (solid)
+  G4Material* buta = new G4Material(name = "1,3-Butadiene", density, ncomponents=2);
+  buta->AddElement(C, natoms=4);
+  buta->AddElement(H, natoms=6);
+  //Acrylonitrile
+  density = 0.81*g/cm3;
+  G4Material* acryl = new G4Material(name = "Acrylonitrile", density, ncomponents=3);
+  acryl->AddElement(C, natoms=3); 
+  acryl->AddElement(H, natoms=3);
+  acryl->AddElement(N, natoms=1);
+
+  // ABS
+  density = 1.08*g/cm3; //1.06-1.08, according to wikipedia
+  G4Material* ABS = new G4Material(name = "G4_ABS", density, ncomponents=3);
+  ABS->AddMaterial(styrene, fractionmass=55*perCent); // 40-60%
+  ABS->AddMaterial(buta, fractionmass=20*perCent); // 5-30%
+  ABS->AddMaterial(acryl, fractionmass=25*perCent); //15-35%
+
+
+
+
+
+
   // Materials
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
-  G4Material* neoprene  = nist->FindOrBuildMaterial("G4_MUSCLE_SKELETAL_ICRP"); // As an example, we'll be more specific closer to the time. 
+  G4Material* neoprene  = nist->FindOrBuildMaterial("G4_ABS"); // As an example, we'll be more specific closer to the time. 
   G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_AIR");  // Again, an example.
 G4Material* PbBalloon = nist->FindOrBuildMaterial("G4_Pb");
 
@@ -117,22 +173,44 @@ G4Material* PbBalloon = nist->FindOrBuildMaterial("G4_Pb");
   assert(sizeof(absorption) == sizeof(photonEnergy));
   assert(sizeof(scintilFast) == sizeof(photonEnergy));
   assert(sizeof(scintilSlow) == sizeof(photonEnergy));
+  // Create material properties table and add properties
+  G4MaterialPropertiesTable* scint_mpt = new G4MaterialPropertiesTable();
   // Add to material properties table
-  mpt->AddProperty("RINDEX",       photonEnergy, refractiveIndex1,nEntries)
+  scint_mpt->AddProperty("RINDEX",       photonEnergy, refractiveIndex1,nEntries)
   ->SetSpline(true);
-  mpt->AddProperty("ABSLENGTH",    photonEnergy, absorption,     nEntries)
+  scint_mpt->AddProperty("ABSLENGTH",    photonEnergy, absorption,     nEntries)
   ->SetSpline(true);
-  mpt->AddProperty("FASTCOMPONENT",photonEnergy, scintilFast,     nEntries)
+  scint_mpt->AddProperty("FASTCOMPONENT",photonEnergy, scintilFast,     nEntries)
   ->SetSpline(true);
-  mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
+  scint_mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
   ->SetSpline(true);
-  mpt->AddConstProperty("SCINTILLATIONYIELD",50./MeV);
-  mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
-  mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
-  mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
-  mpt->AddConstProperty("YIELDRATIO",0.8);
-  mpt->DumpTable();
-  liq_scint->SetMaterialPropertiesTable(mpt);
+  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",0.1/MeV);
+  scint_mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
+  scint_mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
+  scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
+  scint_mpt->AddConstProperty("YIELDRATIO",0.8);
+  G4cout << "Scint G4MaterialPropertiesTable\n"; scint_mpt->DumpTable();
+// Associate material properties table with the liquid scintillator material
+  liq_scint->SetMaterialPropertiesTable(scint_mpt);
+
+  /*Optical properties of the surface of the scintillator
+G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
+scint_surface->SetType(dielectric_dielectric);
+scint_surface->SetFinish(groundfrontpainted);
+scint_surface->SetModel(unified);
+G4cout << "scint_surface\n"; scint_surface->DumpInfo();
+// Create material properties table and add properties
+  if (fReflectivity < 0.) {
+    G4cout << "Reflectivity not set!" << G4endl;
+    abort;  
+  }
+  /*G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
+G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();  
+mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
+->SetSpline(true);
+G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();*/
+// Associates the material properties with the surface of the liquid scintillator. 
+//scint_surface->SetMaterialPropertiesTable(mptForSkin); 
 
   // World
   G4Box* solidWorld =
