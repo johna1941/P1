@@ -51,6 +51,7 @@ set(P1_SCRIPTS
   protongun.mac
   photongun.mac
   squaregun.mac
+  P1.in		# Batch mode file
   gun.mac
   gui.mac
   icons.mac

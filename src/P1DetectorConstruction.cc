@@ -155,7 +155,7 @@ G4Material* PbBalloon = nist->FindOrBuildMaterial("G4_Pb");
                      
   // Orb
   G4String name = "orb"; // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
-  G4VSolid* orb = new G4Orb(name,10.*cm);
+  G4VSolid* orb = new G4Orb(name,5.*cm);
   G4LogicalVolume* orb_lv = new G4LogicalVolume(orb,neoprene,name); //(eg.) Neoprene, can be changed to something more suitable in the future. 
   new G4PVPlacement(0,G4ThreeVector(),orb_lv,name,logicWorld,0,false); // Orb one inside logical world
 
