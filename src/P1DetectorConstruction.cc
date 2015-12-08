@@ -47,6 +47,11 @@
 // #include "G4OpticalSurface.hh"
 // #include "G4LogicalSkinSurface.hh"
 // #include "G4LogicalBorderSurface.hh"
+// ABS Construction:
+#include "G4Element.hh"
+#include "G4Material.hh"
+#include "G4UnitsTable.hh"
+// The above three are for the creation of ABS
 #include <fstream>
 
 P1DetectorConstruction::P1DetectorConstruction()
@@ -73,10 +78,6 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   ///////////////////////////////////
   ///// Material: Construct ABS /////
   //////////////////////////////////
-#include "G4Element.hh"
-#include "G4Material.hh"
-#include "G4UnitsTable.hh"
-// The above three are for the creation of ABS
   G4String name, symbol;
   G4double density;
   G4int ncomponents, natoms;
@@ -125,7 +126,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 G4Material* PbBalloon = nist->FindOrBuildMaterial("G4_Pb");
 
   // For now give liq_scint some optical properties (from examples/extended/optical/OpNovice).
-  G4MaterialPropertiesTable* mpt = new G4MaterialPropertiesTable();
+
   G4double photonEnergy[] =
   { 2.034*eV, 2.068*eV, 2.103*eV, 2.139*eV,
     2.177*eV, 2.216*eV, 2.256*eV, 2.298*eV,
@@ -232,32 +233,22 @@ G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();*/
                       checkOverlaps);        //overlaps checking
                      
   // Orb
-  G4String name = "orb"; // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
-  G4VSolid* orb = new G4Orb(name,5.*cm);
+  // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
+  G4VSolid* orb = new G4Orb(name="orb",4.2*cm);
   G4LogicalVolume* orb_lv = new G4LogicalVolume(orb,neoprene,name); //(eg.) Neoprene, can be changed to something more suitable in the future. 
   new G4PVPlacement(0,G4ThreeVector(),orb_lv,name,logicWorld,0,false); // Orb one inside logical world
 
   // Scintillator
-  name = "scintillator";
-  G4VSolid* scint = new G4Orb(name,4.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
+  G4VSolid* scint = new G4Orb(name="scintillator",4.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
 //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,liq_scint,name);
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
   
-/*
-G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
-  scint_surface->SetType(dielectric_dielectric);
-  scint_surface->SetFinish(polishedfrontpainted);
-  scint_surface->SetModel(unified);
-  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
-  scint_surface->DumpInfo();
-*/
-
-// Lead Balloon
-name = "balloon";
-G4VSolid* balloon = new G4Orb(name,3.9925*cm);
-G4LogicalVolume* balloon_lv = new G4LogicalVolume(balloon,PbBalloon,name);
-new G4PVPlacement(0,G4ThreeVector(),balloon_lv,name,scint_lv,0,false);
+  // Lead Balloon
+  name = "balloon";
+  G4VSolid* balloon = new G4Orb(name,3.9925*cm);
+  G4LogicalVolume* balloon_lv = new G4LogicalVolume(balloon,PbBalloon,name);
+  new G4PVPlacement(0,G4ThreeVector(),balloon_lv,name,scint_lv,0,false);
 
 // Fibre1
 name = "fibre";
