@@ -22,6 +22,7 @@
 #include "G4StepPoint.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4OpticalPhoton.hh"
 
 P1SensitiveDetector::P1SensitiveDetector(const G4String& name)
 : G4VSensitiveDetector(name)
@@ -30,15 +31,26 @@ P1SensitiveDetector::P1SensitiveDetector(const G4String& name)
 G4bool P1SensitiveDetector::ProcessHits(G4Step* step,
                                         G4TouchableHistory*)
 {
+  G4Track* track = step->GetTrack();
+  const G4ParticleDefinition* pPDef = track->GetParticleDefinition();
+  if (pPDef != G4OpticalPhoton::Definition()) {return true;}
+
+  // It's an optical photon - kill it!!!
+  track->SetTrackStatus(fStopAndKill);
+
+  const G4ThreeVector axis(0,0,1);
+  G4ThreeVector direction = track->GetMomentumDirection();
+  if (direction * axis < 0.995) {
+    // Too far from axis - don't count?
+    return true;
+  }
+
   G4RunManager* runManager = G4RunManager::GetRunManager();
   const G4UserEventAction* ea = runManager->GetUserEventAction();
   const P1EventAction* constp1ea = static_cast<const P1EventAction*>(ea);
   P1EventAction* p1ea = const_cast<P1EventAction*>(constp1ea);
 
   p1ea->AddPhoton();
-
-  // A photon has hit the sensitive detector.  Stop further tracking.
-  step->GetTrack()->SetTrackStatus(fStopAndKill);
 
   //  G4double eDep = step->GetTotalEnergyDeposit();
 
