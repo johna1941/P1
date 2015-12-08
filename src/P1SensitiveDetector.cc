@@ -17,6 +17,7 @@
 #include "P1SensitiveDetector.hh"
 
 #include "P1EventAction.hh"
+#include "P1DetectorConstruction.hh"
 
 #include "G4Step.hh"
 #include "G4StepPoint.hh"
@@ -38,14 +39,27 @@ G4bool P1SensitiveDetector::ProcessHits(G4Step* step,
   // It's an optical photon - kill it!!!
   track->SetTrackStatus(fStopAndKill);
 
-  const G4ThreeVector axis(0,0,1);
+  // It's an optical photon
+
+  G4RunManager* runManager = G4RunManager::GetRunManager();
+  const G4VUserDetectorConstruction* dc = runManager->GetUserDetectorConstruction();
+  const P1DetectorConstruction* constdc = static_cast<const P1DetectorConstruction*>(dc);
+  P1DetectorConstruction* p1dc = const_cast<P1DetectorConstruction*>(constdc);
+
+  G4StepPoint* preSP = step->GetPreStepPoint();
+  const G4TouchableHandle& preTH = preSP->GetTouchableHandle();
+  G4VPhysicalVolume* prePV = preTH->GetVolume();
+  if (prePV == p1dc->fFibrePV) {
+    <#statements#>
+  }
+
+  const G4ThreeVector axis = p1dc->fFibre_axis;
   G4ThreeVector direction = track->GetMomentumDirection();
   if (direction * axis < 0.995) {
     // Too far from axis - don't count?
     return true;
   }
 
-  G4RunManager* runManager = G4RunManager::GetRunManager();
   const G4UserEventAction* ea = runManager->GetUserEventAction();
   const P1EventAction* constp1ea = static_cast<const P1EventAction*>(ea);
   P1EventAction* p1ea = const_cast<P1EventAction*>(constp1ea);

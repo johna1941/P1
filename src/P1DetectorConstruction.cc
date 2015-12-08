@@ -240,24 +240,26 @@ G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();*/
   // Scintillator
   // name = "scintillator";
   G4VSolid* scint = new G4Orb(name="scintillator",4.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
-//Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere. 
+                                                          //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,liq_scint,name);
- new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one. 
- // Associate the optical surface
- //  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
+  new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
+                                                                     // Associate the optical surface
+                                                                     //  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
 
-// Fibre1
-name = "fibre";
-G4VSolid* fibre = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
-fFibreLV = new G4LogicalVolume(fibre,neoprene,name);
-new G4PVPlacement(0,G4ThreeVector(0.,0.,3.9*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
+  // Fibre1
+  name = "fibre";
+  G4VSolid* fibre = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
+  fFibreLV = new G4LogicalVolume(fibre,neoprene,name);
+  new G4PVPlacement(0,G4ThreeVector(0.,0.,3.9*cm),fFibreLV,name,scint_lv,0,false); // It's good practise to ask the code to check (when placing) that it doesn't overlap anything. To find out how to do this, look at the G4PVPlacement section; should be an additional argument.
+  fFibre_axis = G4ThreeVector(0,0,1);
 
-// Fibre2
-name = "fibre2";
-G4VSolid* fibre2 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
-fFibre2LV = new G4LogicalVolume(fibre2,neoprene,name);
-new G4PVPlacement(0,G4ThreeVector(0.,3.9*cm,0.*cm),fFibre2LV,name,scint_lv,0,false);
-
+  // Fibre2
+  name = "fibre2";
+  G4VSolid* fibre2 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
+  fFibre2LV = new G4LogicalVolume(fibre2,neoprene,name);
+  G4Transform3D transform2 = G4RotateX3D(90.*deg) * G4Translate3D(0.,3.9*cm,0.);
+  new G4PVPlacement(transform2,fFibre2LV,name,scint_lv,0,false);
+  fFibre2_axis = G4ThreeVector(0,1,0);
 
   //always return the physical World
   return physWorld;

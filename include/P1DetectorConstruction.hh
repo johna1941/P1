@@ -32,6 +32,8 @@
 #define P1DetectorConstruction_h 1
 
 #include "G4VUserDetectorConstruction.hh"
+
+#include "G4ThreeVector.hh"
 #include "globals.hh"
 
 class G4VPhysicalVolume;
@@ -41,6 +43,8 @@ class G4LogicalVolume;
 
 class P1DetectorConstruction : public G4VUserDetectorConstruction
 {
+  friend class P1SensitiveDetector;
+  
 public:
 
   P1DetectorConstruction();
@@ -54,6 +58,10 @@ private:
 
   G4LogicalVolume* fFibreLV;
   G4LogicalVolume* fFibre2LV;
+  G4VPhysicalVolume* fFibrePV;
+  G4VPhysicalVolume* fFibre2PV;
+  G4ThreeVector fFibre_axis;
+  G4ThreeVector fFibre2_axis;
 };
 
 #endif
