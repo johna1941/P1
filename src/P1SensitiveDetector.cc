@@ -49,11 +49,13 @@ G4bool P1SensitiveDetector::ProcessHits(G4Step* step,
   G4StepPoint* preSP = step->GetPreStepPoint();
   const G4TouchableHandle& preTH = preSP->GetTouchableHandle();
   G4VPhysicalVolume* prePV = preTH->GetVolume();
+  G4ThreeVector axis;
   if (prePV == p1dc->fFibrePV) {
-    <#statements#>
+    axis = p1dc->fFibre_axis;
+  } else {
+    axis = p1dc->fFibre2_axis;
   }
 
-  const G4ThreeVector axis = p1dc->fFibre_axis;
   G4ThreeVector direction = track->GetMomentumDirection();
   if (direction * axis < 0.995) {
     // Too far from axis - don't count?
