@@ -73,8 +73,9 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 
 
   ///////////////////////////////////
-  ///// Material: Construct ABS /////
+  //////////// Materials ////////////
   //////////////////////////////////
+  ////////// Construct ABS //////////
   G4String name, symbol;
   G4double density;
   G4int ncomponents, natoms;
@@ -111,8 +112,14 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   ABS->AddMaterial(buta, fractionmass=20*perCent); // 5-30%
   ABS->AddMaterial(acryl, fractionmass=25*perCent); //15-35%
 
-
-
+  ////////// Construct LiqScint //////////
+  // The atomic composition of our liquid scintillator is simply given as a
+  // ratio of H:C (1.33), since there are no other molecules and its simply a 
+  // percentage mixture of two hydrocarbons
+  density = 1.136*g/cm3
+  G4Material* LS = new G4Material(name = "G4_LS", density, ncomponents=2);
+  LS->AddElement(C, natoms=3);
+  LS->AddElement(H, natoms=4);
 
 
 
@@ -121,7 +128,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Materials
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
   G4Material* neoprene  = nist->FindOrBuildMaterial("G4_ABS"); // As an example, we'll be more specific closer to the time. 
-  G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_LUCITE");
+  G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_LS");
 
   // For now give liq_scint some optical properties (from examples/extended/optical/OpNovice).
 
