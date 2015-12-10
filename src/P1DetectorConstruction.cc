@@ -116,7 +116,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // The atomic composition of our liquid scintillator is simply given as a
   // ratio of H:C (1.33), since there are no other molecules and its simply a 
   // percentage mixture of two hydrocarbons
-  density = 1.136*g/cm3
+  density = 1.136*g/cm3;
   G4Material* LS = new G4Material(name = "G4_LS", density, ncomponents=2);
   LS->AddElement(C, natoms=3);
   LS->AddElement(H, natoms=4);
