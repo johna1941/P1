@@ -261,6 +261,23 @@ G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();*/
   fFibre2PV = new G4PVPlacement(transform2,fFibre2LV,name,scint_lv,0,false,true);
   fFibre2_axis = G4ThreeVector(0,1,0);
 
+  // Fibre3
+  name = "fibre3";
+  G4VSolid* fibre3 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
+  fFibre3LV = new G4LogicalVolume(fibre3,neoprene,name);
+  G4Transform3D transform3 = G4Translate3D(0.,3.8*cm,0.) * G4RotateX3D(90.*deg);
+  fFibre3PV = new G4PVPlacement(transform3,fFibre3LV,name,scint_lv,0,false,true);
+  fFibre3_axis = G4ThreeVector(0,1,0);
+
+  // Fibre4
+  name = "fibre4";
+  G4VSolid* fibre4 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
+  fFibre4LV = new G4LogicalVolume(fibre4,neoprene,name);
+  G4Transform3D transform4 = G4Translate3D(0.,3.7*cm,0.) * G4RotateX3D(90.*deg);
+  fFibre4PV = new G4PVPlacement(transform4,fFibre4LV,name,scint_lv,0,false,true);
+  fFibre4_axis = G4ThreeVector(0,1,0);
+  
+
   //always return the physical World
   return physWorld;
 }
@@ -272,5 +289,7 @@ void P1DetectorConstruction::ConstructSDandField()
   pSDman->AddNewDetector(fibreSD);
   fFibreLV->SetSensitiveDetector(fibreSD);
   fFibre2LV->SetSensitiveDetector(fibreSD);
+  fFibre3LV->SetSensitiveDetector(fibreSD);
+  fFibre4LV->SetSensitiveDetector(fibreSD);
 }
 
