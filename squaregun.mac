@@ -39,7 +39,7 @@
 #######################################
 # temporary test for square beam
 
-/gps/particle opticalphoton
+/gps/particle gamma
 /gps/energy 6 MeV
 /gps/pos/type Plane
 /gps/pos/shape Rectangle
