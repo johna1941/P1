@@ -255,9 +255,9 @@ G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();*/
 
   // Fibre1
   name = "fibre";
-  G4VSolid* fibre = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
+  G4VSolid* fibre = new G4Tubs(name,0.,5.*mm,1.*um,0,360.*deg);
   fFibreLV = new G4LogicalVolume(fibre,neoprene,name);
-  G4Transform3D transform = G4Translate3D(-2.3*cm,2.3*cm,-2.3*cm) * G4RotateZ3D(315.*deg) * G4RotateY3D(-135.*deg);
+  G4Transform3D transform = G4Translate3D(-2.25*cm,2.25*cm,-2.25*cm) * G4RotateZ3D(315.*deg) * G4RotateY3D(-135.*deg);
   fFibrePV = new G4PVPlacement(transform,fFibreLV,name,scint_lv,0,false,true);
   fFibre_axis = G4ThreeVector(0,0,1);
 
