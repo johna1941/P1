@@ -42,9 +42,9 @@
 #include "G4VisAttributes.hh"
 #include "P1SensitiveDetector.hh"
 #include "G4SDManager.hh"
-// #include "G4OpticalSurface.hh"
-// #include "G4LogicalSkinSurface.hh"
-// #include "G4LogicalBorderSurface.hh"
+#include "G4OpticalSurface.hh"
+#include "G4LogicalSkinSurface.hh"
+#include "G4LogicalBorderSurface.hh"
 #include "G4Element.hh"
 #include "G4Material.hh"
 #include "G4UnitsTable.hh"
@@ -199,7 +199,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 // Associate material properties table with the liquid scintillator material
   liq_scint->SetMaterialPropertiesTable(scint_mpt);
 
-  /*Optical properties of the surface of the scintillator
+  // Optical properties of the surface of the scintillator
 G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
 scint_surface->SetType(dielectric_dielectric);
 scint_surface->SetFinish(groundfrontpainted);
@@ -208,13 +208,13 @@ G4cout << "scint_surface\n"; scint_surface->DumpInfo();
 // Create material properties table and add properties
   if (fReflectivity < 0.) {
     G4cout << "Reflectivity not set!" << G4endl;
-    abort;  
+    abort();
   }
-  /*G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
+G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
 G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();  
 mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
 ->SetSpline(true);
-G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();*/
+G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
 // Associates the material properties with the surface of the liquid scintillator. 
 //scint_surface->SetMaterialPropertiesTable(mptForSkin); 
 
