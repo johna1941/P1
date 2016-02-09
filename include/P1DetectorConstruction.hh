@@ -36,6 +36,7 @@
 #include "G4ThreeVector.hh"
 #include "globals.hh"
 
+class P1DetectorMessenger;
 class G4VPhysicalVolume;
 class G4LogicalVolume;
 
@@ -44,7 +45,8 @@ class G4LogicalVolume;
 class P1DetectorConstruction : public G4VUserDetectorConstruction
 {
   friend class P1SensitiveDetector;
-  
+  friend class P1DetectorMessenger;
+
 public:
 
   P1DetectorConstruction();
@@ -55,6 +57,10 @@ public:
   virtual void ConstructSDandField();
 
 private:
+
+  P1DetectorMessenger* fpDetectorMessenger;
+
+  G4double fReflectivity;
 
   G4LogicalVolume* fFibreLV;
   G4LogicalVolume* fFibre2LV;

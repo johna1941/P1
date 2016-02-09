@@ -6,7 +6,7 @@
 #include "G4UIcommand.hh"
 #include "G4UIcmdWithADouble.hh"
 #include <sstream>
-/* 
+
 P1DetectorMessenger::P1DetectorMessenger(P1DetectorConstruction * myDet)
 :myDetector(myDet)
 {
@@ -17,7 +17,7 @@ P1DetectorMessenger::P1DetectorMessenger(P1DetectorConstruction * myDet)
   fpP1SetDirectory->SetGuidance("Set commands.");
 
   fpReflectivityCommand = new G4UIcmdWithADouble("/PDMPhys/set/reflectivity",this);
-  fpReflectivityCommand->SetGuidance("Define reflectivity of chmaber walls.");
+  fpReflectivityCommand->SetGuidance("Define reflectivity of chamber walls.");
 }
 
 P1DetectorMessenger::~P1DetectorMessenger () {
@@ -33,4 +33,3 @@ void P1DetectorMessenger::SetNewValue(G4UIcommand * command,G4String newValues)
     myDetector->fReflectivity = fpReflectivityCommand->GetNewDoubleValue(newValues);
   }
 }
-*/
