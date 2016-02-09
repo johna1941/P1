@@ -29,7 +29,7 @@
 /// \brief Implementation of the P1DetectorConstruction class
 
 #include "P1DetectorConstruction.hh"
-// #include "P1DetectorMessenger.hh"
+#include "P1DetectorMessenger.hh"
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4Box.hh"
@@ -53,8 +53,8 @@
 #include <fstream>
 
 P1DetectorConstruction::P1DetectorConstruction()
-: fFibreLV(0)
-// : fpDetectorMessenger(new P1DetectorMessenger(this)), fFibreLV(0), fReflectivity(-1.) // (-1.) initialises it to -1, which is physically impossible. This is a good check to make sure that you've set it. 
+: fpDetectorMessenger(new P1DetectorMessenger(this))
+//, fReflectivity(-1.) // (-1.) initialises it to -1, which is physically impossible. This is a good check to make sure that you've set it.
 { }
 
 P1DetectorConstruction::~P1DetectorConstruction()
