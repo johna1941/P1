@@ -216,7 +216,7 @@ mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
 ->SetSpline(true);
 G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
 // Associates the material properties with the surface of the liquid scintillator. 
-//scint_surface->SetMaterialPropertiesTable(mptForSkin); 
+scint_surface->SetMaterialPropertiesTable(mptForSkin); 
 
 
   // World
