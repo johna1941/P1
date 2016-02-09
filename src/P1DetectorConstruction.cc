@@ -263,7 +263,7 @@ G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();*/
 
   // Central Scintillator
   // name = "CentScintillator";
-  G4VSolid* CentScint = new G4Orb(name="CentScintillator",1.9.*cm); //Another orb, inside of the outer orb. r = 1.9 cm cf. r = 2 cm
+  G4VSolid* CentScint = new G4Orb(name="CentScintillator",1.9*cm); //Another orb, inside of the outer orb. r = 1.9 cm cf. r = 2 cm
                                                           //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
   G4LogicalVolume* CentScint_lv = new G4LogicalVolume(CentScint,liq_scint,name);
   new G4PVPlacement(0,G4ThreeVector(),CentScint_lv,name,CentOrb_lv,0,false); // Orb two inside of Orb one.
