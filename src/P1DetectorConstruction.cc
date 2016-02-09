@@ -195,27 +195,27 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
   scint_mpt->AddConstProperty("YIELDRATIO",0.8);
   G4cout << "Scint G4MaterialPropertiesTable\n"; scint_mpt->DumpTable();
-// Associate material properties table with the liquid scintillator material
+  // Associate material properties table with the liquid scintillator material
   liq_scint->SetMaterialPropertiesTable(scint_mpt);
 
   // Optical properties of the surface of the scintillator
-G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
-scint_surface->SetType(dielectric_dielectric);
-scint_surface->SetFinish(groundfrontpainted);
-scint_surface->SetModel(unified);
-G4cout << "scint_surface\n"; scint_surface->DumpInfo();
-// Create material properties table and add properties
+  G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
+  scint_surface->SetType(dielectric_dielectric);
+  scint_surface->SetFinish(groundfrontpainted);
+  scint_surface->SetModel(unified);
+  G4cout << "scint_surface\n"; scint_surface->DumpInfo();
+  // Create material properties table and add properties
   if (fReflectivity < 0.) {
     G4cout << "Reflectivity not set!" << G4endl;
     abort();
   }
-G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
-G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();  
-mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
-->SetSpline(true);
-G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
-// Associates the material properties with the surface of the liquid scintillator. 
-scint_surface->SetMaterialPropertiesTable(mptForSkin); 
+  G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
+  G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();  
+  mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
+  ->SetSpline(true);
+  G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
+  // Associates the material properties with the surface of the liquid scintillator. 
+  scint_surface->SetMaterialPropertiesTable(mptForSkin); 
 
 
   // World
@@ -269,6 +269,10 @@ scint_surface->SetMaterialPropertiesTable(mptForSkin);
                                                                      // Associate the optical surface
                                                                      //  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
 
+
+
+
+  // NOTE TO SC: To add an optical properties table, consult the code above, and the Geant4 application developers guide
   // Fibre1
   name = "fibre";
   G4VSolid* fibre = new G4Tubs(name,0.,5.*mm,1.*um,0,360.*deg);
