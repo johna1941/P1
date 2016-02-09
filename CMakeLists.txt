@@ -49,9 +49,6 @@ set(P1_SCRIPTS
   init_vis.mac
   init_run.mac
   vis.mac
-  protongun.mac
-  photongun.mac
-  squaregun.mac
   gui.mac
   icons.mac
   harrypotter5.png
