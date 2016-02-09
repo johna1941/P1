@@ -107,7 +107,8 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 
   // ABS
   density = 1.08*g/cm3; //1.06-1.08, according to wikipedia
-  G4Material* ABS = new G4Material(name = "G4_ABS", density, ncomponents=3);
+  G4Material* ABS = new G4Material(name = "ABS", density, ncomponents=3); // Do not need to call it "G4_...", since this
+  // is typically reserved for G4 library files. 
   ABS->AddMaterial(styrene, fractionmass=55*perCent); // 40-60%
   ABS->AddMaterial(buta, fractionmass=20*perCent); // 5-30%
   ABS->AddMaterial(acryl, fractionmass=25*perCent); //15-35%
@@ -117,7 +118,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // ratio of H:C (1.33), since there are no other molecules and its simply a 
   // percentage mixture of two hydrocarbons
   density = 1.136*g/cm3;
-  G4Material* LS = new G4Material(name = "G4_LS", density, ncomponents=2);
+  G4Material* LS = new G4Material(name = "LS", density, ncomponents=2);
   LS->AddElement(C, natoms=3);
   LS->AddElement(H, natoms=4);
 
@@ -127,8 +128,6 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 
   // Materials
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
-  G4Material* neoprene  = nist->FindOrBuildMaterial("G4_ABS"); // As an example, we'll be more specific closer to the time. 
-  G4Material* liq_scint  = nist->FindOrBuildMaterial("G4_LS");
 
   // For now give liq_scint some optical properties (from examples/extended/optical/OpNovice).
 
