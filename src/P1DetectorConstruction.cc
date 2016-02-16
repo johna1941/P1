@@ -291,7 +291,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // G4Tubs(G4String name, G4double RMin, G4double RMax, G4double Dz, G4double SPhi, G4double DPhi)
   // RMin: inner radius, RMax: outer radius, Dz: half-length in z, SPhi: Starting phi in rad, DPhi: Angle of segment in rad
   fFibreLV = new G4LogicalVolume(fibre,ABS,name);
-  G4Transform3D transform = G4Translate3D(0.,0.,1.95*cm);
+  G4Transform3D transform = G4Translate3D(0.,0.,3.985*cm);
   fFibrePV = new G4PVPlacement(transform,fFibreLV,name,scint_lv,0,false,true);
   fFibre_axis = G4ThreeVector(0,0,1);
 
