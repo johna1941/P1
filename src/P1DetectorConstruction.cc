@@ -195,7 +195,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   scint_mpt->AddConstProperty("YIELDRATIO",0.8);
   G4cout << "Scint G4MaterialPropertiesTable\n"; scint_mpt->DumpTable();
   // Associate material properties table with the liquid scintillator material
-  liq_scint->SetMaterialPropertiesTable(scint_mpt);
+  LS->SetMaterialPropertiesTable(scint_mpt);
 
   // Optical properties of the surface of the scintillator
   G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
@@ -275,7 +275,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Fibre1
   name = "fibre";
   G4VSolid* fibre = new G4Tubs(name,0.,5.*mm,1.*um,0,360.*deg);
-  fFibreLV = new G4LogicalVolume(fibre,neoprene,name);
+  fFibreLV = new G4LogicalVolume(fibre,ABS,name);
   G4Transform3D transform = G4Translate3D(-2.25*cm,2.25*cm,-2.25*cm) * G4RotateZ3D(315.*deg) * G4RotateY3D(-135.*deg);
   fFibrePV = new G4PVPlacement(transform,fFibreLV,name,scint_lv,0,false,true);
   fFibre_axis = G4ThreeVector(0,0,1);
@@ -283,7 +283,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Fibre2
   name = "fibre2";
   G4VSolid* fibre2 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
-  fFibre2LV = new G4LogicalVolume(fibre2,neoprene,name);
+  fFibre2LV = new G4LogicalVolume(fibre2,ABS,name);
   G4Transform3D transform2 = G4Translate3D(2.3*cm,-2.3*cm,-2.3*cm) * G4RotateZ3D(315.*deg) * G4RotateY3D(135.*deg);
   fFibre2PV = new G4PVPlacement(transform2,fFibre2LV,name,scint_lv,0,false,true);
   fFibre2_axis = G4ThreeVector(0,1,0);
@@ -291,7 +291,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Fibre3
   name = "fibre3";
   G4VSolid* fibre3 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
-  fFibre3LV = new G4LogicalVolume(fibre3,neoprene,name);
+  fFibre3LV = new G4LogicalVolume(fibre3,ABS,name);
   G4Transform3D transform3 = G4Translate3D(-2.3*cm,-2.3*cm,2.3*cm) * G4RotateZ3D(45.*deg) * G4RotateY3D(-45.*deg);
   fFibre3PV = new G4PVPlacement(transform3,fFibre3LV,name,scint_lv,0,false,true);
   fFibre3_axis = G4ThreeVector(0,1,0);
@@ -299,7 +299,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Fibre4
   name = "fibre4";
   G4VSolid* fibre4 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
-  fFibre4LV = new G4LogicalVolume(fibre4,neoprene,name);
+  fFibre4LV = new G4LogicalVolume(fibre4,ABS,name);
   G4Transform3D transform4 = G4Translate3D(2.3*cm,2.3*cm,2.3*cm) * G4RotateZ3D(45.*deg) * G4RotateY3D(45.*deg);
   fFibre4PV = new G4PVPlacement(transform4,fFibre4LV,name,scint_lv,0,false,true);
   fFibre4_axis = G4ThreeVector(0,1,0);
