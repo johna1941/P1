@@ -129,8 +129,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Materials
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
-  // For now give liq_scint some optical properties (from examples/extended/optical/OpNovice).
-
+  // These need to be subbed out for the true values.
   G4double photonEnergy[] =
   { 2.034*eV, 2.068*eV, 2.103*eV, 2.139*eV,
     2.177*eV, 2.216*eV, 2.256*eV, 2.298*eV,
@@ -200,7 +199,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 
   // Optical properties of the surface of the scintillator
   G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
-  scint_surface->SetType(dielectric_dielectric);
+  scint_surface->SetType(dielectric_dielectric); // If both surfaces have refractive properties added, this will actually calculate reflection for us
   scint_surface->SetFinish(groundfrontpainted);
   scint_surface->SetModel(unified);
   G4cout << "scint_surface\n"; scint_surface->DumpInfo();
