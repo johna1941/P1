@@ -52,9 +52,7 @@ G4bool P1SensitiveDetector::ProcessHits(G4Step* step,
   G4ThreeVector axis;
   if (prePV == p1dc->fFibrePV) {
     axis = p1dc->fFibre_axis;
-  } else {
-    axis = p1dc->fFibre2_axis;
-  }
+  } 
 // Need to somehow add Fibre3 and 4 to this 
   G4ThreeVector direction = track->GetMomentumDirection();
   if (direction * axis < 0.995) {
