@@ -202,7 +202,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   scint_mpt->AddConstProperty("YIELDRATIO",0.8);
   G4cout << "Scint G4MaterialPropertiesTable\n"; scint_mpt->DumpTable();
   // Associate material properties table with the liquid scintillator material
-  liq_scint->SetMaterialPropertiesTable(scint_mpt);
+  LS->SetMaterialPropertiesTable(scint_mpt);
 
 
 
