@@ -63,17 +63,8 @@ private:
   G4double fReflectivity;
 
   G4LogicalVolume* fFibreLV;
-  G4LogicalVolume* fFibre2LV;
-  G4LogicalVolume* fFibre3LV;
-  G4LogicalVolume* fFibre4LV;
   G4VPhysicalVolume* fFibrePV;
-  G4VPhysicalVolume* fFibre2PV;
-  G4VPhysicalVolume* fFibre3PV;
-  G4VPhysicalVolume* fFibre4PV;
   G4ThreeVector fFibre_axis;
-  G4ThreeVector fFibre2_axis;
-  G4ThreeVector fFibre3_axis;
-  G4ThreeVector fFibre4_axis;
 };
 
 #endif
