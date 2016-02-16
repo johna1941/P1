@@ -246,7 +246,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // name = "scintillator";
   G4VSolid* scint = new G4Orb(name="scintillator",4.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
                                                           //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
-  G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,liq_scint,name);
+  G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,LS,name);
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
                                                                      // Associate the optical surface
  
@@ -263,7 +263,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // name = "CentScintillator";
   G4VSolid* CentScint = new G4Orb(name="CentScintillator",1.9*cm); //Another orb, inside of the outer orb. r = 1.9 cm cf. r = 2 cm
                                                           //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
-  G4LogicalVolume* CentScint_lv = new G4LogicalVolume(CentScint,liq_scint,name);
+  G4LogicalVolume* CentScint_lv = new G4LogicalVolume(CentScint,LS,name);
   new G4PVPlacement(0,G4ThreeVector(),CentScint_lv,name,CentOrb_lv,0,false); // Orb two inside of Orb one.
                                                                      // Associate the optical surface
                                                                      //  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
