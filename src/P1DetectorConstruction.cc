@@ -74,7 +74,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 
   ///////////////////////////////////
   //////////// Materials ////////////
-  //////////////////////////////////
+  ///////////////////////////////////
   ////////// Construct ABS //////////
   G4String name, symbol;
   G4double density;
@@ -126,8 +126,21 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 
 
 
+
+
+
   // Materials
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
+
+
+
+
+
+  ///////////////////////////////////////////////
+  ////////// Material Properties Table //////////
+  ///////////////////////////////////////////////
+
+  ///////////// Liquid Scintillator /////////////
 
   // These need to be subbed out for the true values.
   G4double photonEnergy[] =
@@ -148,12 +161,6 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
     1.3572, 1.358,  1.3585, 1.359,  1.3595,
     1.36,   1.3608};
   G4double absorption[] =
-//  {3.448*m,  4.082*m,  6.329*m,  9.174*m, 12.346*m, 13.889*m,
-//    15.152*m, 17.241*m, 18.868*m, 20.000*m, 26.316*m, 35.714*m,
-//    45.455*m, 47.619*m, 52.632*m, 52.632*m, 55.556*m, 52.632*m,
-//    52.632*m, 47.619*m, 45.455*m, 41.667*m, 37.037*m, 33.333*m,
-//    30.000*m, 28.500*m, 27.000*m, 24.500*m, 22.000*m, 19.500*m,
-//    17.500*m, 14.500*m };
   { 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
     3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
     3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
@@ -188,7 +195,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   ->SetSpline(true);
   scint_mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
   ->SetSpline(true);
-  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",0.1/MeV);
+  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",12000/MeV);
   scint_mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
   scint_mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
   scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
@@ -196,6 +203,21 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4cout << "Scint G4MaterialPropertiesTable\n"; scint_mpt->DumpTable();
   // Associate material properties table with the liquid scintillator material
   liq_scint->SetMaterialPropertiesTable(scint_mpt);
+
+
+
+
+
+
+
+
+
+
+  //////////////////////////////////////////////
+  ///////////// Surface Properties /////////////
+  //////////////////////////////////////////////
+
+  ///////////// Liquid Scintillator /////////////
 
   // Optical properties of the surface of the scintillator
   G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
@@ -216,6 +238,16 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Associates the material properties with the surface of the liquid scintillator. 
   scint_surface->SetMaterialPropertiesTable(mptForSkin); 
 
+
+
+
+
+
+
+
+  ///////////////////////////////////
+  /////////// Build World ///////////
+  ///////////////////////////////////
 
   // World
   G4Box* solidWorld =
@@ -250,60 +282,18 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
                                                                      // Associate the optical surface
  
-  ///////////////////                                                                  //  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
-  /// Central Orb ///
-  ///////////////////
-  
-  // G4String name = "CentOrb"; // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
-  G4VSolid* CentOrb = new G4Orb(name="CentOrb",2.*cm);
-  G4LogicalVolume* CentOrb_lv = new G4LogicalVolume(CentOrb,ABS,name); 
-  new G4PVPlacement(0,G4ThreeVector(),CentOrb_lv,name,scint_lv,0,false);
-
-  // Central Scintillator
-  // name = "CentScintillator";
-  G4VSolid* CentScint = new G4Orb(name="CentScintillator",1.9*cm); //Another orb, inside of the outer orb. r = 1.9 cm cf. r = 2 cm
-                                                          //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
-  G4LogicalVolume* CentScint_lv = new G4LogicalVolume(CentScint,liq_scint,name);
-  new G4PVPlacement(0,G4ThreeVector(),CentScint_lv,name,CentOrb_lv,0,false); // Orb two inside of Orb one.
-                                                                     // Associate the optical surface
-                                                                     //  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
-
-
 
 
   // NOTE TO SC: To add an optical properties table, consult the code above, and the Geant4 application developers guide
   // Fibre1
   name = "fibre";
-  G4VSolid* fibre = new G4Tubs(name,0.,5.*mm,1.*um,0,360.*deg);
+  G4VSolid* fibre = new G4Tubs(name,0.,2.5*mm,1.*um,0.,360.*deg);
+  // G4Tubs(G4String name, G4double RMin, G4double RMax, G4double Dz, G4double SPhi, G4double DPhi)
+  // RMin: inner radius, RMax: outer radius, Dz: half-length in z, SPhi: Starting phi in rad, DPhi: Angle of segment in rad
   fFibreLV = new G4LogicalVolume(fibre,neoprene,name);
-  G4Transform3D transform = G4Translate3D(-2.25*cm,2.25*cm,-2.25*cm) * G4RotateZ3D(315.*deg) * G4RotateY3D(-135.*deg);
+  G4Transform3D transform = G4Translate3D(0.,0.,1.95*cm);
   fFibrePV = new G4PVPlacement(transform,fFibreLV,name,scint_lv,0,false,true);
   fFibre_axis = G4ThreeVector(0,0,1);
-
-  // Fibre2
-  name = "fibre2";
-  G4VSolid* fibre2 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
-  fFibre2LV = new G4LogicalVolume(fibre2,neoprene,name);
-  G4Transform3D transform2 = G4Translate3D(2.3*cm,-2.3*cm,-2.3*cm) * G4RotateZ3D(315.*deg) * G4RotateY3D(135.*deg);
-  fFibre2PV = new G4PVPlacement(transform2,fFibre2LV,name,scint_lv,0,false,true);
-  fFibre2_axis = G4ThreeVector(0,1,0);
-
-  // Fibre3
-  name = "fibre3";
-  G4VSolid* fibre3 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
-  fFibre3LV = new G4LogicalVolume(fibre3,neoprene,name);
-  G4Transform3D transform3 = G4Translate3D(-2.3*cm,-2.3*cm,2.3*cm) * G4RotateZ3D(45.*deg) * G4RotateY3D(-45.*deg);
-  fFibre3PV = new G4PVPlacement(transform3,fFibre3LV,name,scint_lv,0,false,true);
-  fFibre3_axis = G4ThreeVector(0,1,0);
-
-  // Fibre4
-  name = "fibre4";
-  G4VSolid* fibre4 = new G4Tubs(name,0.,0.05*cm,1.*um,0,360.*deg);
-  fFibre4LV = new G4LogicalVolume(fibre4,neoprene,name);
-  G4Transform3D transform4 = G4Translate3D(2.3*cm,2.3*cm,2.3*cm) * G4RotateZ3D(45.*deg) * G4RotateY3D(45.*deg);
-  fFibre4PV = new G4PVPlacement(transform4,fFibre4LV,name,scint_lv,0,false,true);
-  fFibre4_axis = G4ThreeVector(0,1,0);
-  
 
   //always return the physical World
   return physWorld;
@@ -315,8 +305,5 @@ void P1DetectorConstruction::ConstructSDandField()
   G4VSensitiveDetector* fibreSD = new P1SensitiveDetector("Fibre");
   pSDman->AddNewDetector(fibreSD);
   fFibreLV->SetSensitiveDetector(fibreSD);
-  fFibre2LV->SetSensitiveDetector(fibreSD);
-  fFibre3LV->SetSensitiveDetector(fibreSD);
-  fFibre4LV->SetSensitiveDetector(fibreSD);
 }
 
