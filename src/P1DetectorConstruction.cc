@@ -280,8 +280,9 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
                                                           //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,LS,name);
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
-                                                                     // Associate the optical surface
- 
+  // Associate the optical surface
+  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
+
 
 
   // NOTE TO SC: To add an optical properties table, consult the code above, and the Geant4 application developers guide
