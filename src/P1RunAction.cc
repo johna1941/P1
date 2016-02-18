@@ -94,7 +94,7 @@ void P1RunAction::EndOfRunAction(const G4Run* run)
   G4cout
   << "\n The run consists of " << nofEvents << " " << runCondition
   << "\n Number of photons reaching sensitive detector: ";
-  G4cerr << numberOfPhotons;
+  G4cout << numberOfPhotons;
   G4cout << "\n------------------------------------------------------------"
   << G4endl;
 }
