@@ -80,7 +80,6 @@ void P1RunAction::EndOfRunAction(const G4Run* run)
     G4double particleEnergy = particleGun->GetParticleEnergy();
     runCondition += G4BestUnit(particleEnergy,"Energy");
   }
-
   // Print
   //
   if (IsMaster()) {
@@ -94,8 +93,8 @@ void P1RunAction::EndOfRunAction(const G4Run* run)
 
   G4cout
   << "\n The run consists of " << nofEvents << " " << runCondition
-  << "\n Number of photons reaching sensitive detector: "
-  << numberOfPhotons
-  << "\n------------------------------------------------------------"
+  << "\n Number of photons reaching sensitive detector: ";
+  G4cerr << numberOfPhotons;
+  G4cout << "\n------------------------------------------------------------"
   << G4endl;
 }
