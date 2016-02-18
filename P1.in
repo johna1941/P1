@@ -2,18 +2,9 @@
 # This is called by running ./P1run in the SC computer local area. 
 # Useless when not ran on SC computer, but saved as a template for future studies
 /run/initialize
-
-/gps/particle proton
-/gps/energy 230 MeV
-/gps/pos/type Point
-/gps/pos/centre 0 0 -10.001 cm
-/gps/direction 0 0 1
-
-#/gps/particle e-
-#/gps/energy 6 MeV
-#/gps/pos/type Point
-#/gps/pos/centre 0 0 -4.201 cm
-#/gps/direction 0 0 1
+/control/execute gun.mac
+/control/cout/setCerrFile output.txt
+/control/cout/setCoutFile Temp.txt
 
 
 /run/beamOn 10000
