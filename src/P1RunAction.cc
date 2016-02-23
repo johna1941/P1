@@ -32,7 +32,6 @@
 #include "P1PrimaryGeneratorAction.hh"
 #include "P1DetectorConstruction.hh"
 #include "P1Run.hh"
-
 #include "G4GeneralParticleSource.hh"
 #include "G4RunManager.hh"
 #include "G4LogicalVolumeStore.hh"
@@ -40,11 +39,19 @@
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
 
-P1RunAction::P1RunAction()
-{}
+#include "P1Analysis.hh"
+
+P1RunAction::P1RunAction():G4UserRunAction()
+{
+    // Create analysis manager
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+    analysisManager->SetVerboseLevel(0);
+}
 
 P1RunAction::~P1RunAction()
-{}
+{
+    delete G4AnalysisManager::Instance();
+}
 
 G4Run* P1RunAction::GenerateRun()
 {
@@ -55,6 +62,11 @@ void P1RunAction::BeginOfRunAction(const G4Run*)
 { 
   //inform the runManager to save random number seed
   G4RunManager::GetRunManager()->SetRandomNumberStore(false);
+    
+  // Get analysis manager
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  // Open an output file
+    analysisManager->OpenFile(const G4String& fileName = "P1");
 }
 
 void P1RunAction::EndOfRunAction(const G4Run* run)
@@ -80,11 +92,16 @@ void P1RunAction::EndOfRunAction(const G4Run* run)
     G4double particleEnergy = particleGun->GetParticleEnergy();
     runCondition += G4BestUnit(particleEnergy,"Energy");
   }
+
   // Print
   //
   if (IsMaster()) {
     G4cout
     << "\n--------------------End of Global Run-----------------------";
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+      fileName << numberOfPhotons << G4endl;
+      analysisManager->Write();
+      analysisManager->CloseFile();
   }
   else {
     G4cout
@@ -93,8 +110,8 @@ void P1RunAction::EndOfRunAction(const G4Run* run)
 
   G4cout
   << "\n The run consists of " << nofEvents << " " << runCondition
-  << "\n Number of photons reaching sensitive detector: ";
-  G4cout << numberOfPhotons;
-  G4cout << "\n------------------------------------------------------------"
+  << "\n Number of photons reaching sensitive detector: "
+  << numberOfPhotons
+  << "\n------------------------------------------------------------"
   << G4endl;
 }
