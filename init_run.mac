@@ -4,4 +4,4 @@
 #Pick a gun to use. 
 
 /control/execute gun.mac
-/analysis/setFileName output.txt
+/PDMPhys/set/reflectivity 0.95
