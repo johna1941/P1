@@ -39,13 +39,23 @@
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
 
+#include <fstream>
+
 #include "P1Analysis.hh"
+
+
+// I believe analysis manager is now redundent since I'm using <fstream>
 
 P1RunAction::P1RunAction():G4UserRunAction()
 {
     // Create analysis manager
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
     analysisManager->SetVerboseLevel(0);
+    // Create ntuple
+  analysisManager->CreateNtuple("P1", "NumberOfPhotons");
+  analysisManager->CreateNtupleDColumn("NPhot");
+  analysisManager->FinishNtuple();
+  numberOfPhotons = 0;
 }
 
 P1RunAction::~P1RunAction()
@@ -66,7 +76,7 @@ void P1RunAction::BeginOfRunAction(const G4Run*)
   // Get analysis manager
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
   // Open an output file
-    analysisManager->OpenFile(const G4String& fileName = "P1");
+    analysisManager->OpenFile("P1");
 }
 
 void P1RunAction::EndOfRunAction(const G4Run* run)
@@ -75,7 +85,7 @@ void P1RunAction::EndOfRunAction(const G4Run* run)
   if (nofEvents == 0) return;
 
   const P1Run* p1Run = static_cast<const P1Run*>(run);
-  G4int numberOfPhotons = p1Run->GetPhotons();
+  numberOfPhotons = p1Run->GetPhotons();
 
   // Run conditions
   //  note: There is no primary generator action object for "master"
@@ -99,9 +109,11 @@ void P1RunAction::EndOfRunAction(const G4Run* run)
     G4cout
     << "\n--------------------End of Global Run-----------------------";
     G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-      fileName << numberOfPhotons << G4endl;
-      analysisManager->Write();
-      analysisManager->CloseFile();
+     
+      std::ofstream output("test.txt", std::ios::app); // std::ios::app = append mode: will add data onto the end of file
+      output << numberOfPhotons << std::endl;
+	output.close();
+	      
   }
   else {
     G4cout
