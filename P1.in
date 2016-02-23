@@ -2,9 +2,6 @@
 # This is called by running ./P1run in the SC computer local area. 
 # Useless when not ran on SC computer, but saved as a template for future studies
 /run/initialize
-/control/execute gun.mac
-/control/cout/setCerrFile output.txt
-/control/cout/setCoutFile Temp.txt
-
+/control/execute init_run.mac
 
 /run/beamOn 10000
