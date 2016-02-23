@@ -188,7 +188,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   ->SetSpline(true);
   scint_mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
   ->SetSpline(true);
-  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",0.1/MeV);
+  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",12000/MeV);
   scint_mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
   scint_mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
   scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
@@ -248,8 +248,9 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
                                                           //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,LS,name);
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
-                                                                     // Associate the optical surface
- 
+  // Associate the optical surface
+  new G4LogicalSkinSurface("scint_surface", scint_lv, scint_surface);
+  
   ///////////////////                                                                  //  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
   /// Central Orb ///
   ///////////////////
