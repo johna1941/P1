@@ -54,7 +54,7 @@
 
 P1DetectorConstruction::P1DetectorConstruction()
 : fpDetectorMessenger(new P1DetectorMessenger(this))
-//, fReflectivity(-1.) // (-1.) initialises it to -1, which is physically impossible. This is a good check to make sure that you've set it.
+, fReflectivity(-1.) // (-1.) initialises it to -1, which is physically impossible. This is a good check to make sure that you've set it.
 { }
 
 P1DetectorConstruction::~P1DetectorConstruction()
@@ -195,7 +195,8 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   ->SetSpline(true);
   scint_mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
   ->SetSpline(true);
-  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",0.001/MeV);
+//  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",12000./MeV);
+  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",1./MeV);
   scint_mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
   scint_mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
   scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
@@ -220,6 +221,12 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   ///////////// Liquid Scintillator /////////////
 
   // Optical properties of the surface of the scintillator
+  G4double reflectivity[] =
+  { 0.95, 0.95, 0.95, 0.95, 0.95, 0.95, 0.95,
+    0.95, 0.95, 0.95, 0.95, 0.95, 0.95, 0.95,
+    0.95, 0.95, 0.95, 0.95, 0.95, 0.95, 0.95,
+    0.95, 0.95, 0.95, 0.95, 0.95, 0.95, 0.95,
+    0.95, 0.95, 0.95, 0.95 };
   G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
   scint_surface->SetType(dielectric_dielectric); // If both surfaces have refractive properties added, this will actually calculate reflection for us
   scint_surface->SetFinish(groundfrontpainted);
@@ -230,8 +237,8 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
     G4cout << "Reflectivity not set!" << G4endl;
     abort();
   }
-  G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
-  G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();  
+//  G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
+  G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();
   mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
   ->SetSpline(true);
   G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
