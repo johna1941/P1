@@ -195,7 +195,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   ->SetSpline(true);
   scint_mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
   ->SetSpline(true);
-  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",0.001/MeV);
+  scint_mpt->AddConstProperty("SCINTILLATIONYIELD",12000./MeV);
   scint_mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
   scint_mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
   scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
