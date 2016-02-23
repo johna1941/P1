@@ -18,6 +18,8 @@ P1DetectorMessenger::P1DetectorMessenger(P1DetectorConstruction * myDet)
 
   fpReflectivityCommand = new G4UIcmdWithADouble("/PDMPhys/set/reflectivity",this);
   fpReflectivityCommand->SetGuidance("Define reflectivity of chamber walls.");
+  fpReflectivityCommand->SetToBeBroadcasted(false);
+  fpReflectivityCommand->AvailableForStates(G4State_PreInit);
 }
 
 P1DetectorMessenger::~P1DetectorMessenger () {
