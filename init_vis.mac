@@ -9,7 +9,6 @@
 #
 # Change the default number of threads (in multi-threaded mode)
 /run/numberOfThreads 4
-/PDMPhys/set/reflectivity 0.95
 #
 # Initialize kernel
 /run/initialize
