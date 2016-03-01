@@ -7,7 +7,7 @@
 /run/verbose 2
 /process/optical/verbose 0	# Supress output to allow large numbers of photons to be used with optical processes enabled
 #
-/PDMPhys/set/reflectivity 0.001
+/PDMPhys/set/reflectivity 0.98
 #
 # Initialize kernel
 /run/initialize
