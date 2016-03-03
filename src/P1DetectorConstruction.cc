@@ -189,7 +189,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
     3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
     3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
     3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
-    3.*m, 3.*m, 3.*m, 3.*m };
+    3.*m, 3.*m, 3.*m, 3.*m }; // Quoted to be 2.5-3m bulk absorption
   G4double scintilFast[] =
   { 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
     1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
@@ -221,8 +221,8 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   ->SetSpline(true);
   scint_mpt->AddConstProperty("SCINTILLATIONYIELD",12000/MeV);
   scint_mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
-  scint_mpt->AddConstProperty("FASTTIMECONSTANT", 1.*ns);
-  scint_mpt->AddConstProperty("SLOWTIMECONSTANT",10.*ns);
+  scint_mpt->AddConstProperty("FASTTIMECONSTANT", 3.2*ns); // Given to be 3.2ns in EJ-301 PDF
+  scint_mpt->AddConstProperty("SLOWTIMECONSTANT",32.3*ns); // "First three components; 3.2, 32.3, 270...?"
   scint_mpt->AddConstProperty("YIELDRATIO",0.8);
   G4cout << "Scint G4MaterialPropertiesTable\n"; scint_mpt->DumpTable();
   // Associate material properties table with the liquid scintillator material
@@ -255,9 +255,10 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
 //            0.965, 0.965, 0.965, 0.9645,
 //            0.963, 0.962 };
 
-  G4double reflectivity[nEntries]; for (auto& r: reflectivity) r = fReflectivity;
+  G4double reflectivity[nEntries]; 
+  for (auto& r: reflectivity) r = fReflectivity;
   G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();  
-  mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries)
+  mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries) // Takes photonEnergy, nEntries from liquid scint above. Looks like this is instead of using rindex of a new surface
   ->SetSpline(true);
   G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
   // Associates the material properties with the surface of the liquid scintillator. 
@@ -298,7 +299,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // Associate the optical surface
   new G4LogicalSkinSurface("scint_surface", scint_lv, scint_surface);
   
-  ///////////////////                                                                  //  new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
+  ///////////////////
   /// Central Orb ///
   ///////////////////
   

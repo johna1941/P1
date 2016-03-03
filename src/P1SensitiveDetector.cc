@@ -57,7 +57,7 @@ G4bool P1SensitiveDetector::ProcessHits(G4Step* step,
   }
 // Need to somehow add Fibre3 and 4 to this 
   G4ThreeVector direction = track->GetMomentumDirection();
-  if (direction * axis < 0.995) {
+  if (direction * axis < 0.924) { // cos (22.5) = 0.9238795...
     // Too far from axis - don't count?
     return true;
   }
