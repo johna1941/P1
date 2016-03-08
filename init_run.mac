@@ -3,7 +3,7 @@
 #
 # Set some default verbose
 /control/verbose 2
-/control/saveHistory
+#/control/saveHistory
 /run/verbose 2
 /process/optical/verbose 0	# Supress output to allow large numbers of photons to be used with optical processes enabled
 #
