@@ -1,6 +1,8 @@
 # This is a batch mode macro file for the attenuation studies. 
 # This is called by running ./P1run in the SC computer local area. 
 # Useless when not ran on SC computer, but saved as a template for future studies
+
+
 /control/execute init_run.mac
 # /run/initialize
 # (This is done in init_run.mac anyway)
