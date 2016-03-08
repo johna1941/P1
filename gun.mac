@@ -9,7 +9,7 @@
 /gps/ene/type Brem
 /gps/ene/min 1 keV
 /gps/ene/max 6 MeV
-/gps/ene/temp 298  #Recommended as a user-parameter for Bremsstrahlung spectrums
+/gps/ene/temp 2e9  #Recommended as a user-parameter for Bremsstrahlung spectrums
 
 ######  Geometry  ######
 /gps/pos/type Plane
