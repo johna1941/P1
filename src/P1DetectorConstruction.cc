@@ -54,7 +54,6 @@
 
 P1DetectorConstruction::P1DetectorConstruction()
 : fpDetectorMessenger(new P1DetectorMessenger(this))
-//, fReflectivity(-1.) // (-1.) initialises it to -1, which is physically impossible. This is a good check to make sure that you've set it.
 { }
 
 P1DetectorConstruction::~P1DetectorConstruction()
@@ -228,30 +227,30 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
     G4cout << "Reflectivity not set!" << G4endl;
     abort();
   }
-//        G4double photonEnergy[] =
-//        {   3.315, 3.261, 3.208, 3.157,
-//            3.108, 3.060, 3.014, 2.925,
-//            2.841, 2.763, 2.688, 2.617,
-//            2.550, 2.486, 2.426, 2.368,
-//            2.313, 2.260, 2.210, 2.162,
-//            2.116, 2.072 };
-//
-//        G4double reflectivity[] =
-//        {   0.7, 0.8, 0.87, 0.899,
-//            0.92, 0.934, 0.945, 0.955,
-//            0.9575, 0.96, 0.962, 0.9625,
-//            0.964, 0.964, 0.964, 0.965,
-//            0.965, 0.965, 0.965, 0.9645,
-//            0.963, 0.962 };
+  G4double photonEnergyRe[] =
+    {   3.315, 3.261, 3.208, 3.157,
+    3.108, 3.060, 3.014, 2.925,
+    2.841, 2.763, 2.688, 2.617,
+    2.550, 2.486, 2.426, 2.368,
+    2.313, 2.260, 2.210, 2.162,
+    2.116, 2.072 };
 
-  G4double reflectivity[nEntries]; 
-  for (auto& r: reflectivity) r = fReflectivity;
-  G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();  
-  mptForSkin->AddProperty("REFLECTIVITY", photonEnergy, reflectivity, nEntries) // Takes photonEnergy, nEntries from liquid scint above. Looks like this is instead of using rindex of a new surface
+    G4double reflectivity[] =
+    {   0.7, 0.8, 0.87, 0.899,
+        0.92, 0.934, 0.945, 0.955,
+        0.9575, 0.96, 0.962, 0.9625,
+        0.964, 0.964, 0.964, 0.965,
+        0.965, 0.965, 0.965, 0.9645,
+        0.963, 0.962 };
+
+  const G4int nEntriesRe = sizeof(photonEnergyRe)/sizeof(G4double);
+  assert(sizeof(reflectivity) == sizeof(photonEnergyRe));
+  G4MaterialPropertiesTable* mptForSkin = new G4MaterialPropertiesTable();
+  mptForSkin->AddProperty("REFLECTIVITY", photonEnergyRe, reflectivity, nEntriesRe) // Takes photonEnergy, nEntries from liquid scint above. Looks like this is instead of using rindex of a new surface
   ->SetSpline(true);
   G4cout << "Skin G4MaterialPropertiesTable\n"; mptForSkin->DumpTable();
   // Associates the material properties with the surface of the liquid scintillator. 
-  scint_surface->SetMaterialPropertiesTable(mptForSkin); 
+  scint_surface->SetMaterialPropertiesTable(mptForSkin);
 
 
   // World
