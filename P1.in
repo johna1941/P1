@@ -1,19 +1,11 @@
-# This is a batch mode macro file for the attenuation studies. 
-# This is called by running ./P1run in the SC computer local area. 
+# This is a batch mode macro file for the attenuation studies.
+# This is called by running ./P1run in the SC computer local area.
 # Useless when not ran on SC computer, but saved as a template for future studies
-/run/initialize
-
-/gps/particle proton
-/gps/energy 230 MeV
-/gps/pos/type Point
-/gps/pos/centre 0 0 -10.001 cm
-/gps/direction 0 0 1
-
-#/gps/particle e-
-#/gps/energy 6 MeV
-#/gps/pos/type Point
-#/gps/pos/centre 0 0 -4.201 cm
-#/gps/direction 0 0 1
 
 
-/run/beamOn 10000
+/control/execute init_run.mac
+# /run/initialize
+# (This is done in init_run.mac anyway)
+
+
+/run/beamOn 1000

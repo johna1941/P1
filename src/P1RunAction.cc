@@ -32,7 +32,6 @@
 #include "P1PrimaryGeneratorAction.hh"
 #include "P1DetectorConstruction.hh"
 #include "P1Run.hh"
-
 #include "G4GeneralParticleSource.hh"
 #include "G4RunManager.hh"
 #include "G4LogicalVolumeStore.hh"
@@ -40,62 +39,91 @@
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
 
-P1RunAction::P1RunAction()
-{}
+#include <fstream>
+
+#include "P1Analysis.hh"
+
+
+// I believe analysis manager is now redundent since I'm using <fstream>
+
+P1RunAction::P1RunAction():G4UserRunAction()
+{
+    // Create analysis manager
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+    analysisManager->SetVerboseLevel(0);
+    // Create ntuple
+    analysisManager->CreateNtuple("P1", "NumberOfPhotons");
+    analysisManager->CreateNtupleDColumn("NPhot");
+    analysisManager->FinishNtuple();
+    numberOfPhotons = 0;
+}
 
 P1RunAction::~P1RunAction()
-{}
+{
+    delete G4AnalysisManager::Instance();
+}
 
 G4Run* P1RunAction::GenerateRun()
 {
-  return new P1Run; 
+    return new P1Run;
 }
 
 void P1RunAction::BeginOfRunAction(const G4Run*)
-{ 
-  //inform the runManager to save random number seed
-  G4RunManager::GetRunManager()->SetRandomNumberStore(false);
+{
+    //inform the runManager to save random number seed
+    G4RunManager::GetRunManager()->SetRandomNumberStore(false);
+    
+    // Get analysis manager
+    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+    // Open an output file
+    analysisManager->OpenFile("P1");
 }
 
 void P1RunAction::EndOfRunAction(const G4Run* run)
 {
-  G4int nofEvents = run->GetNumberOfEvent();
-  if (nofEvents == 0) return;
-
-  const P1Run* p1Run = static_cast<const P1Run*>(run);
-  G4int numberOfPhotons = p1Run->GetPhotons();
-
-  // Run conditions
-  //  note: There is no primary generator action object for "master"
-  //        run manager for multi-threaded mode.
-  const P1PrimaryGeneratorAction* generatorAction
-  = static_cast<const P1PrimaryGeneratorAction*>
-  (G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction());
-  G4String runCondition;
-  if (generatorAction)
-  {
-    const G4GeneralParticleSource* particleGun = generatorAction->GetParticleGun();
-    runCondition += particleGun->GetParticleDefinition()->GetParticleName();
-    runCondition += " of ";
-    G4double particleEnergy = particleGun->GetParticleEnergy();
-    runCondition += G4BestUnit(particleEnergy,"Energy");
-  }
-
-  // Print
-  //
-  if (IsMaster()) {
+    G4int nofEvents = run->GetNumberOfEvent();
+    if (nofEvents == 0) return;
+    
+    const P1Run* p1Run = static_cast<const P1Run*>(run);
+    numberOfPhotons = p1Run->GetPhotons();
+    
+    // Run conditions
+    //  note: There is no primary generator action object for "master"
+    //        run manager for multi-threaded mode.
+    const P1PrimaryGeneratorAction* generatorAction
+    = static_cast<const P1PrimaryGeneratorAction*>
+    (G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction());
+    G4String runCondition;
+    if (generatorAction)
+    {
+        const G4GeneralParticleSource* particleGun = generatorAction->GetParticleGun();
+        runCondition += particleGun->GetParticleDefinition()->GetParticleName();
+        runCondition += " of ";
+        G4double particleEnergy = particleGun->GetParticleEnergy();
+        runCondition += G4BestUnit(particleEnergy,"Energy");
+    }
+    
+    // Print
+    //
+    if (IsMaster()) {
+        G4cout
+        << "\n--------------------End of Global Run-----------------------";
+        G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+        
+        std::ofstream output("test.txt", std::ios::app); // std::ios::app = append mode: will add data onto the end of file
+        output << numberOfPhotons << std::endl;
+        output.close();
+        
+    }
+    else {
+        G4cout
+        << "\n--------------------End of Local Run------------------------";
+    }
+    
     G4cout
-    << "\n--------------------End of Global Run-----------------------";
-  }
-  else {
-    G4cout
-    << "\n--------------------End of Local Run------------------------";
-  }
-
-  G4cout
-  << "\n The run consists of " << nofEvents << " " << runCondition
-  << "\n Number of photons reaching sensitive detector: "
-  << numberOfPhotons
-  << "\n------------------------------------------------------------"
-  << G4endl;
+    << "\n The run consists of " << nofEvents << " " << runCondition
+    << "\n Number of photons reaching sensitive detector: "
+    << numberOfPhotons
+    << "\n------------------------------------------------------------"
+    << G4endl;
 }

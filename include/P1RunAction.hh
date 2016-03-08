@@ -52,6 +52,9 @@ class P1RunAction : public G4UserRunAction
     virtual G4Run* GenerateRun();
     virtual void BeginOfRunAction(const G4Run*);
     virtual void   EndOfRunAction(const G4Run*);
+
+  private:
+  	G4int numberOfPhotons;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
