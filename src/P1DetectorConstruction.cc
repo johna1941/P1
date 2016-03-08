@@ -130,7 +130,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
   // These need to be subbed out for the true values.
-  G4double photonEnergy[] =
+  G4double photonEnergyRI[] =
   { 2.034*eV, 2.068*eV, 2.103*eV, 2.139*eV,
     2.177*eV, 2.216*eV, 2.256*eV, 2.298*eV,
     2.341*eV, 2.386*eV, 2.433*eV, 2.481*eV,
@@ -138,94 +138,81 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
     2.757*eV, 2.820*eV, 2.885*eV, 2.954*eV,
     3.026*eV, 3.102*eV, 3.181*eV, 3.265*eV,
     3.353*eV, 3.446*eV, 3.545*eV, 3.649*eV,
-    3.760*eV, 3.877*eV, 4.002*eV, 4.136*eV };
+    3.760*eV, 3.877*eV, 4.002*eV, 4.136*eV }; //32
 // Values from EJ301-em.xls data table. To be incorporated... 
-//    G4double photonEnergy[] =
-//  { 3.108*eV, 3.089*eV, 3.069*eV, 3.051*eV,
-//    3.039*eV, 3.032*eV, 3.022*eV, 3.014*eV,
-//    2.995*eV, 2.988*eV, 2.981*eV, 2.974*eV,
-//    2.967*eV, 2.963*eV, 2.960*eV, 2.956*eV,
-//    2.952*eV, 2.946*eV, 2.939*eV, 2.935*eV,
-//    2.932*eV, 2.928*eV, 2.925*eV, 2.922*eV,
-//    2.918*eV, 2.908*eV, 2.891*eV, 2.882*eV,
-//    2.872*eV, 2.868*eV, 2.865*eV, 2.858*eV,
-//    2.841*eV, 2.825*eV, 2.820*eV, 2.814*eV,
-//    2.803*eV, 2.794*eV, 2.781*eV, 2.771*eV,
-//    2.763*eV, 2.747*eV, 2.732*eV, 2.717*eV,
-//    2.702*eV, 2.673*eV, 2.645*eV, 2.617*eV,
-//    2.590*eV, 2.563*eV, 2.537*eV, 2.511*eV,
-//    2.486*eV, 2.462*eV, 2.438*eV, 2.414*eV,
-//    2.391*eV };
-//    G4double scintilFast[] =
-//  { 0.052, 0.078, 0.119, 0.168,
-//    0.210, 0.255, 0.353, 0.455,
-//    0.727, 0.797, 0.853, 0.892,
-//    0.925, 0.936, 0.948, 0.958,
-//    0.967, 0.981, 0.991, 0.996,
-//    1.000, 0.997, 0.993, 0.986,
-//    0.969, 0.895, 0.799, 0.762,
-//    0.729, 0.724, 0.721, 0.711,
-//    0.708, 0.704, 0.701, 0.697,
-//    0.680, 0.662, 0.632, 0.598,
-//    0.554, 0.490, 0.438, 0.401,
-//    0.364, 0.312, 0.273, 0.238,
-//    0.208, 0.183, 0.158, 0.136,
-//    0.119, 0.104, 0.092, 0.08,
-//    0.07 };
-  G4double refractiveIndex1[] =
-  { 1.3435, 1.344,  1.3445, 1.345,  1.3455,
-    1.346,  1.3465, 1.347,  1.3475, 1.348,
-    1.3485, 1.3492, 1.35,   1.3505, 1.351,
-    1.3518, 1.3522, 1.3530, 1.3535, 1.354,
-    1.3545, 1.355,  1.3555, 1.356,  1.3568,
-    1.3572, 1.358,  1.3585, 1.359,  1.3595,
-    1.36,   1.3608};
-  G4double absorption[] =
-//  {3.448*m,  4.082*m,  6.329*m,  9.174*m, 12.346*m, 13.889*m,
-//    15.152*m, 17.241*m, 18.868*m, 20.000*m, 26.316*m, 35.714*m,
-//    45.455*m, 47.619*m, 52.632*m, 52.632*m, 55.556*m, 52.632*m,
-//    52.632*m, 47.619*m, 45.455*m, 41.667*m, 37.037*m, 33.333*m,
-//    30.000*m, 28.500*m, 27.000*m, 24.500*m, 22.000*m, 19.500*m,
-//    17.500*m, 14.500*m };
-  { 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
-    3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
-    3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
-    3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m, 3.*m,
-    3.*m, 3.*m, 3.*m, 3.*m }; // Quoted to be 2.5-3m bulk absorption
+    G4double photonEnergySF[] =
+  { 3.108*eV, 3.089*eV, 3.069*eV, 3.051*eV,
+    3.039*eV, 3.032*eV, 3.022*eV, 3.014*eV,
+    2.995*eV, 2.988*eV, 2.981*eV, 2.974*eV,
+    2.967*eV, 2.963*eV, 2.960*eV, 2.956*eV,
+    2.952*eV, 2.946*eV, 2.939*eV, 2.935*eV,
+    2.932*eV, 2.928*eV, 2.925*eV, 2.922*eV,
+    2.918*eV, 2.908*eV, 2.891*eV, 2.882*eV,
+    2.872*eV, 2.868*eV, 2.865*eV, 2.858*eV,
+    2.841*eV, 2.825*eV, 2.820*eV, 2.814*eV,
+    2.803*eV, 2.794*eV, 2.781*eV, 2.771*eV,
+    2.763*eV, 2.747*eV, 2.732*eV, 2.717*eV,
+    2.702*eV, 2.673*eV, 2.645*eV, 2.617*eV,
+    2.590*eV, 2.563*eV, 2.537*eV, 2.511*eV,
+    2.486*eV, 2.462*eV, 2.438*eV, 2.414*eV,
+    2.391*eV }; //57
   G4double scintilFast[] =
-  { 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
-    1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
-    1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
-    1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00,
-    1.00, 1.00, 1.00, 1.00 };
-  G4double scintilSlow[] =
-  { 0.01, 1.00, 2.00, 3.00, 4.00, 5.00, 6.00,
-    7.00, 8.00, 9.00, 8.00, 7.00, 6.00, 4.00,
-    3.00, 2.00, 1.00, 0.01, 1.00, 2.00, 3.00,
-    4.00, 5.00, 6.00, 7.00, 8.00, 9.00, 8.00,
-    7.00, 6.00, 5.00, 4.00 };
+  { 0.052, 0.078, 0.119, 0.168,
+    0.210, 0.255, 0.353, 0.455,
+    0.727, 0.797, 0.853, 0.892,
+    0.925, 0.936, 0.948, 0.958,
+    0.967, 0.981, 0.991, 0.996,
+    1.000, 0.997, 0.993, 0.986,
+    0.969, 0.895, 0.799, 0.762,
+    0.729, 0.724, 0.721, 0.711,
+    0.708, 0.704, 0.701, 0.697,
+    0.680, 0.662, 0.632, 0.598,
+    0.554, 0.490, 0.438, 0.401,
+    0.364, 0.312, 0.273, 0.238,
+    0.208, 0.183, 0.158, 0.136,
+    0.119, 0.104, 0.092, 0.08,
+    0.07 }; //57
+  G4double refractiveIndex[] =
+  { 1.3435, 1.344,  1.3445, 1.345,  1.3455, //5
+    1.346,  1.3465, 1.347,  1.3475, 1.348, //10
+    1.3485, 1.3492, 1.35,   1.3505, 1.351, //15
+    1.3518, 1.3522, 1.3530, 1.3535, 1.354, //20
+    1.3545, 1.355,  1.3555, 1.356,  1.3568, //25
+    1.3572, 1.358,  1.3585, 1.359,  1.3595, //30
+    1.36,   1.3608}; // 32
+  G4double absorption[] =  // Quoted to be 2.5-3m bulk absorption, we'll assume worst case.
+  { 2.5*m, 2.5*m, 2.5*m, 2.5*m, 2.5*m, //5
+    2.5*m, 2.5*m, 2.5*m, 2.5*m, 2.5*m, //10
+    2.5*m, 2.5*m, 2.5*m, 2.5*m, 2.5*m, //15
+    2.5*m, 2.5*m, 2.5*m, 2.5*m, 2.5*m, //20
+    2.5*m, 2.5*m, 2.5*m, 2.5*m, 2.5*m, //25
+    2.5*m, 2.5*m, 2.5*m, 2.5*m, 2.5*m, //30
+    2.5*m, 2.5*m, 2.5*m, 2.5*m, 2.5*m, //35
+    2.5*m, 2.5*m, 2.5*m, 2.5*m, 2.5*m, //40
+    2.5*m, 2.5*m, 2.5*m, 2.5*m, 2.5*m, //45
+    2.5*m, 2.5*m, 2.5*m, 2.5*m, 2.5*m, //50
+    2.5*m, 2.5*m, 2.5*m, 2.5*m, 2.5*m, //55
+    2.5*m, 2.5*m}; //57
   // Health check
-  const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
-  assert(sizeof(refractiveIndex1) == sizeof(photonEnergy));
-  assert(sizeof(absorption) == sizeof(photonEnergy));
-  assert(sizeof(scintilFast) == sizeof(photonEnergy));
-  assert(sizeof(scintilSlow) == sizeof(photonEnergy));
+  const G4int nEntriesSF = sizeof(photonEnergySF)/sizeof(G4double);
+  const G4int nEntriesRI = sizeof(photonEnergyRI)/sizeof(G4double);
+  assert(sizeof(refractiveIndex) == sizeof(photonEnergyRI));
+  assert(sizeof(absorption) == sizeof(photonEnergySF));
+  assert(sizeof(scintilFast) == sizeof(photonEnergySF));
 // Create material properties table and add properties
   G4MaterialPropertiesTable* scint_mpt = new G4MaterialPropertiesTable();
   // Add to material properties table
-  scint_mpt->AddProperty("RINDEX",       photonEnergy, refractiveIndex1,nEntries)
+  scint_mpt->AddProperty("RINDEX",       photonEnergyRI, refractiveIndex, nEntriesRI)
   ->SetSpline(true);
-  scint_mpt->AddProperty("ABSLENGTH",    photonEnergy, absorption,     nEntries)
+  scint_mpt->AddProperty("ABSLENGTH",    photonEnergySF,   absorption,      nEntriesSF)
   ->SetSpline(true);
-  scint_mpt->AddProperty("FASTCOMPONENT",photonEnergy, scintilFast,     nEntries)
-  ->SetSpline(true);
-  scint_mpt->AddProperty("SLOWCOMPONENT",photonEnergy, scintilSlow,     nEntries)
+  scint_mpt->AddProperty("FASTCOMPONENT",photonEnergySF,   scintilFast,     nEntriesSF)
   ->SetSpline(true);
   scint_mpt->AddConstProperty("SCINTILLATIONYIELD",12000/MeV);
   scint_mpt->AddConstProperty("RESOLUTIONSCALE",1.0);
   scint_mpt->AddConstProperty("FASTTIMECONSTANT", 3.2*ns); // Given to be 3.2ns in EJ-301 PDF
-  scint_mpt->AddConstProperty("SLOWTIMECONSTANT",32.3*ns); // "First three components; 3.2, 32.3, 270...?"
-  scint_mpt->AddConstProperty("YIELDRATIO",0.8);
+//  scint_mpt->AddConstProperty("SLOWTIMECONSTANT",32.3*ns); // "First three components; 3.2, 32.3, 270...?"
+//  scint_mpt->AddConstProperty("YIELDRATIO",0.8); // Relative strength of the fast vs. slow, i.e. 80% scintillations are fast.
   G4cout << "Scint G4MaterialPropertiesTable\n"; scint_mpt->DumpTable();
   // Associate material properties table with the liquid scintillator material
   LS->SetMaterialPropertiesTable(scint_mpt);
