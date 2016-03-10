@@ -52,6 +52,7 @@ set(P1_SCRIPTS
   gun.mac
   gui.mac
   icons.mac
+  runmacro.mac
   harrypotter5.png
   harrypotter1.png
   monkey.png
