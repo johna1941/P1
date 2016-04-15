@@ -283,15 +283,15 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
                       checkOverlaps);        //overlaps checking
                      
   // Box
-  G4VSolid* cube = new G4Box(name="cube",1.3*cm, 1.3*cm, 1.3*cm);
+  G4VSolid* cube = new G4Box(name="cube",1.8*cm, 1.8*cm, 1.8*cm);
   G4LogicalVolume* cube_lv = new G4LogicalVolume(cube,ABS,name);
   new G4PVPlacement(0,G4ThreeVector(),cube_lv,name,logicWorld,0,false); // Cube inside the logical world
 
   // Scintillator
   // name = "scintillator";
-  G4VSolid* scint = new G4Box(name="scintillator", 1.*cm, 1.*cm, 1.*cm);
+  G4VSolid* scint = new G4Box(name="scintillator", 1.5*cm, 1.5*cm, 1.5*cm);
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,LS,name);
-  new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
+  new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,cube_lv,0,false); // Orb two inside of Orb one.
   // Associate the optical surface
   new G4LogicalSkinSurface("scint-surface", scint_lv, scint_surface);
 
@@ -304,7 +304,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // G4Tubs(G4String name, G4double RMin, G4double RMax, G4double Dz, G4double SPhi, G4double DPhi)
   // RMin: inner radius, RMax: outer radius, Dz: half-length in z, SPhi: Starting phi in rad, DPhi: Angle of segment in rad
   fFibreLV = new G4LogicalVolume(fibre,ABS,name);
-  G4Transform3D transform = G4Translate3D(0.,0.,0.999*cm);
+  G4Transform3D transform = G4Translate3D(0.,0.,1.499*cm);
   fFibrePV = new G4PVPlacement(transform,fFibreLV,name,scint_lv,0,false,true);
   fFibre_axis = G4ThreeVector(0,0,1);
 
