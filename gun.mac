@@ -22,3 +22,18 @@
 /gps/direction 0 5.58 10
 /gps/pos/rot1 1 0 0
 /gps/pos/rot2 0 1 0
+
+
+
+
+
+
+###### Proton ######
+#/gps/particle proton
+#/gps/energy 250 MeV
+#/gps/ene/type Mono
+#/gps/pos/type Point
+#/gps/pos/centre 0 -5.58 -10 cm
+#/gps/direction 0 5.58 10
+
+
