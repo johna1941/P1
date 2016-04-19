@@ -284,13 +284,13 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
                      
   // Orb
   // G4String name = "orb"; // Orb is simple - solid w/ radius. G4Sphere can be set as hollow w/ sectors/segments, but we've began simple. 
-  G4VSolid* orb = new G4Orb(name="orb",5.*cm);
+  G4VSolid* orb = new G4Orb(name="orb",2.5*cm);
   G4LogicalVolume* orb_lv = new G4LogicalVolume(orb,ABS,name);
   new G4PVPlacement(0,G4ThreeVector(),orb_lv,name,logicWorld,0,false); // Orb one inside logical world
 
   // Scintillator
   // name = "scintillator";
-  G4VSolid* scint = new G4Orb(name="scintillator",4.5*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
+  G4VSolid* scint = new G4Orb(name="scintillator",2.*cm); //Another orb, inside of the outer orb. r = 4cm cf. r = 5cm
                                                           //Geant4 is hierarchical, so placing one substance inside of another will displace the orginal. The mother displaces the daughter. This is more efficient than specifying a hollow sphere.
   G4LogicalVolume* scint_lv = new G4LogicalVolume(scint,LS,name);
   new G4PVPlacement(0,G4ThreeVector(),scint_lv,name,orb_lv,0,false); // Orb two inside of Orb one.
@@ -306,7 +306,7 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
   // G4Tubs(G4String name, G4double RMin, G4double RMax, G4double Dz, G4double SPhi, G4double DPhi)
   // RMin: inner radius, RMax: outer radius, Dz: half-length in z, SPhi: Starting phi in rad, DPhi: Angle of segment in rad
   fFibreLV = new G4LogicalVolume(fibre,ABS,name);
-  G4Transform3D transform = G4Translate3D(0.,0.,4.488*cm);
+  G4Transform3D transform = G4Translate3D(0.,0.,1.982*cm);
   fFibrePV = new G4PVPlacement(transform,fFibreLV,name,scint_lv,0,false,true);
   fFibre_axis = G4ThreeVector(0,0,1);
 
