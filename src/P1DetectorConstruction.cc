@@ -240,13 +240,13 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
         2.116*eV, 2.072*eV };
     
     G4double reflectivity[] =
-    // Table of zeros to find minimum photon collection
-    {   0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0, 0, 0,
-        0, 0 };
+    // Table of .5s to find minimum photon collection
+    {   0.5, 0.5, 0.5, 0.5,
+        0.5, 0.5, 0.5, 0.5,
+        0.5, 0.5, 0.5, 0.5,
+        0.5, 0.5, 0.5, 0.5,
+        0.5, 0.5, 0.5, 0.5,
+        0.5, 0.5 };
 
     // {   0.7, 0.8, 0.87, 0.899,
     //     0.92, 0.934, 0.945, 0.955,

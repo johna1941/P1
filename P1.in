@@ -8,4 +8,4 @@
 # (This is done in init_run.mac anyway)
 
 
-/run/beamOn 10000
+/run/beamOn 50000
