@@ -222,7 +222,8 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
     // Optical properties of the surface of the scintillator
     G4OpticalSurface* scint_surface = new G4OpticalSurface("scint-surface");
     scint_surface->SetType(dielectric_dielectric); // If both surfaces have refractive properties added, this will actually calculate reflection for us
-    scint_surface->SetFinish(groundfrontpainted);
+    // scint_surface->SetFinish(groundfrontpainted);
+    scint_surface->SetFinish(polishedfrontpainted); // For smooth surface
     scint_surface->SetModel(unified);
     G4cout << "scint_surface\n"; scint_surface->DumpInfo();
     // Create material properties table and add properties
@@ -239,12 +240,20 @@ G4VPhysicalVolume* P1DetectorConstruction::Construct()
         2.116*eV, 2.072*eV };
     
     G4double reflectivity[] =
-    {   0.7, 0.8, 0.87, 0.899,
-        0.92, 0.934, 0.945, 0.955,
-        0.9575, 0.96, 0.962, 0.9625,
-        0.964, 0.964, 0.964, 0.965,
-        0.965, 0.965, 0.965, 0.9645,
-        0.963, 0.962 };
+    // Table of zeros to find minimum photon collection
+    {   0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0 };
+
+    // {   0.7, 0.8, 0.87, 0.899,
+    //     0.92, 0.934, 0.945, 0.955,
+    //     0.9575, 0.96, 0.962, 0.9625,
+    //     0.964, 0.964, 0.964, 0.965,
+    //     0.965, 0.965, 0.965, 0.9645,
+    //     0.963, 0.962 };
     
     const G4int nEntriesRe = sizeof(photonEnergyRe)/sizeof(G4double);
     assert(sizeof(reflectivity) == sizeof(photonEnergyRe));

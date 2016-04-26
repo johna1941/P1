@@ -55,7 +55,9 @@ G4bool P1SensitiveDetector::ProcessHits(G4Step* step,
     }
 
   G4ThreeVector direction = track->GetMomentumDirection();
-  if (direction * axis < 0.924) { // cos (22.5) = 0.9238795...
+  if (direction * axis < 0.9978) { 
+    // cos (3.8) = 0.997801... (optical fibre only)
+    // cos (22.5) = 0.9238795... (collimating lens)
     // Too far from axis - don't count?
     return true;
   }
