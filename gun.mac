@@ -5,24 +5,24 @@
 ######  Energy  ######
 /gps/particle gamma
 # The maximum photon energy is (probably) 6 MeV, so its more likely that the average is ~1/3 of this
-/gps/energy 6 MeV
+/gps/energy 120 keV
 /gps/ene/type Brem
-/gps/ene/min 100 keV
-/gps/ene/max 6 MeV
+/gps/ene/min 0 keV
+/gps/ene/max 120 keV
 /gps/ene/temp 2e9  #Recommended as a user-parameter for Bremsstrahlung spectrums
 
 ######  Geometry  ######
 /gps/pos/type Plane
 # A square beam is probably a suitable approximated of the collimated beam.
-/gps/pos/shape Rectangle
+/gps/pos/shape Circle
 # The size of the beam can be modified to optimise detector size
-/gps/pos/halfx 5 mm # Need to hear from MTaylor about realistic sizes
-/gps/pos/halfy 5 mm
+/gps/pos/radius 5 mm # Need to hear from MTaylor about realistic sizes
 /gps/pos/centre 0 5 0 cm
 /gps/direction 0 -1 0
 /gps/pos/rot1 0 0 1
 /gps/pos/rot2 1 0 0
 # Can perhaps incorporate a distribution of beam energy? Need input from MTaylor.
+# Technically there are target metal peaks... Can we maybe produce a histogram to incorporate these? 
 
 ###### Proton ######
 #/gps/particle proton
