@@ -38,6 +38,8 @@
 /vis/viewer/set/style wireframe
 /vis/viewer/set/auxiliaryEdge true
 /vis/viewer/set/lineSegmentsPerCircle 100
+/vis/viewer/set/background white
+/vis/viewer/set/defaultColour blue
 #
 # Draw smooth trajectories at end of event, showing trajectory points
 # as markers 2 pixels wide:
